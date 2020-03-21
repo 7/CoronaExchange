@@ -18,6 +18,43 @@ Mr. Brown opens up his app and can quickly check that someone close to him (Mrs.
 
 If you are wondering what amount of toilet paper usually trades for a pack of noodles, you can quickly check with a look at the current CoronaExchange Stock Market.
 
+## Backend API
+
+### GET /api/search
+
+#### Example Request:
+
+```
+http://localhost:5000/api/search?topLeftLocation=52.5,13&lowerRightLocation=54,14
+```
+
+#### Example Response:
+
+```json
+[
+    {
+        "user": "Wolverine",
+        "location": {
+            "lat": 52.5157723,
+            "lng": 13.3869281
+        },
+        "offer": "Nudeln",
+        "tradeFor": "Toiletten Papier"
+    },
+    {
+        "user": "Gandalf",
+        "location": {
+            "lat": 52.5670062,
+            "lng": 13.3936488
+        },
+        "offer": "Dosenwurst",
+        "tradeFor": "Mineralwasser"
+    }
+]
+```
+
+---
+
 ## Technology Decisions
 
 ### Vue.js for frontend
@@ -72,3 +109,6 @@ For more information about using Node.js on Heroku, see these Dev Center article
 - [Best Practices for Node.js Development](https://devcenter.heroku.com/articles/node-best-practices)
 - [Using WebSockets on Heroku with Node.js](https://devcenter.heroku.com/articles/node-websockets)
 
+### Firebase for Authentication
+
+We decided to use the Google service Firebase to support social login authentication.
