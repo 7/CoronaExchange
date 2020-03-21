@@ -1,36 +1,8 @@
 <template>
   <div id="app" class="landing">
     <Navigation />
-
-    <div class="jumbotron">
-      <div class="container">
-        <ItemSearch />
-      </div>
-    </div>
-
-    <div class="container">
-      <ItemList v-bind:items="items" v-on:contactUser="contactUser" />
-    </div>
-
-    <div v-bind:id="contactUserId" class="modal fade" tabindex="-1" role="dialog">
-      <div class="modal-dialog modal-dialog-scrollable" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Tauschpartnerchat</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <textarea name="" id="modal-text" class="form-control" rows="4">Hallo John Doe, ich würde gerne Nudeln gegen Toilettenpapier tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?</textarea>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
-            <button type="button" class="btn btn-primary">Nachricht senden</button>
-          </div>
-        </div>
-      </div>
-    </div>
+<router-view></router-view>
+    <!--  -->
     
   </div>
 </template>
