@@ -1,7 +1,7 @@
 module.exports = {
     availableItems: [
         {
-            user: "N. Maier",
+            user: "Morpheus",
             location: {
                 lat: 52.4923924,
                 lng: 13.373914
@@ -10,7 +10,7 @@ module.exports = {
             tradeFor: "Nudeln"
         },
         {
-            user: "H. Müller",
+            user: "Wolverine",
             location: {
                 lat: 52.5157723,
                 lng: 13.3869281
@@ -19,7 +19,7 @@ module.exports = {
             tradeFor: "Toiletten Papier"
         },
         {
-            user: "A. Schmidt",
+            user: "Gandalf",
             location: {
                 lat: 52.5670062,
                 lng: 13.3936488
@@ -28,7 +28,7 @@ module.exports = {
             tradeFor: "Mineralwasser"
         },
         {
-            user: "B. Brand",
+            user: "Walter White",
             location: {
                 lat: 52.4753942,
                 lng: 13.3997043
