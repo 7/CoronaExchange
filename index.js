@@ -44,5 +44,5 @@ function searchItems(req, res) {
 
 express()
   .use(express.static(path.join(__dirname, 'public/dist')))
-  .get('/api/search', auth.checkIfAuthenticated, searchItems)
+  .get('/api/search', searchItems)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));
