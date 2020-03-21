@@ -1,3 +1,4 @@
+var fs = require("fs");
 module.exports = {
     availableItems: [
         {
@@ -37,8 +38,9 @@ module.exports = {
             tradeFor: "Dosenwurst"
         }],
 
-    mockDb: function (items) {
-        this.availableItems = items;
+    mockDb: function (jsonFile) {
+        var contents = fs.readFileSync(jsonFile);
+        this.availableItems = JSON.parse(contents);
         this.itemsByLocation = function (topLeftLocation, lowerRightLocation) {
             return this.availableItems.filter(e => byLocation(e, topLeftLocation, lowerRightLocation));
         }
