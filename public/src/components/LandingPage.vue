@@ -1,16 +1,42 @@
 <template>
-  <div id="app" class="landing">
-    <Navigation />
-<router-view></router-view>
-    <!--  -->
-    
-  </div>
+<div id="app" class="landing">
+    <div class="jumbotron">
+      <div class="container">
+        <ItemSearch />
+      </div>
+    </div>
+
+    <div class="container">
+      
+     <ItemList v-bind:items="items" v-on:contactUser="contactUser" />
+    </div>
+
+    <div v-bind:id="contactUserId" class="modal fade" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-dialog-scrollable" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Tauschpartnerchat</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <textarea name="" id="modal-text" class="form-control" rows="4">Hallo John Doe, ich würde gerne Nudeln gegen Toilettenpapier tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?</textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
+            <button type="button" class="btn btn-primary">Nachricht senden</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
 </template>
 
 <script>
-import Navigation from "./components/Navigation.vue"
-import ItemSearch from "./components/ItemSearch"
-import ItemList from "./components/ItemList"
+import Navigation from "./Navigation.vue"
+import ItemSearch from "./ItemSearch"
+import ItemList from "./ItemList"
 import $ from "jquery"
 // import Chat from "./components/Chat"
 
@@ -25,7 +51,6 @@ export default {
   data: function() {
     return {
       contactUserId: null,
-      user_location: null,
       filter_offer_by: "",
       filter_search_by: "",
       items: [
@@ -41,7 +66,7 @@ export default {
         {
           user_id: "2",
           search: "Nudeln",
-          offer: "Atemschutzmasken",
+          offer: "Toilettenpapier",
           location: {
             long: "",
             lat: ""
@@ -49,8 +74,8 @@ export default {
         },
         {
           user_id: "3",
-          search: "Atemschutzmasken",
-          offer: "Handschuhe",
+          search: "Nudeln",
+          offer: "Toilettenpapier",
           location: {
             long: "",
             lat: ""
@@ -59,7 +84,7 @@ export default {
         {
           user_id: "4",
           search: "Nudeln",
-          offer: "Desinfektionsmittel",
+          offer: "Toilettenpapier",
           location: {
             long: "",
             lat: ""
@@ -67,8 +92,8 @@ export default {
         },
         {
           user_id: "5",
-          search: "Handschuhe",
-          offer: "Nudeln",
+          search: "Nudeln",
+          offer: "Toilettenpapier",
           location: {
             long: "",
             lat: ""
@@ -76,7 +101,7 @@ export default {
         },
         {
           user_id: "6",
-          search: "Atemschutzmasken",
+          search: "Nudeln",
           offer: "Toilettenpapier",
           location: {
             long: "",
@@ -84,26 +109,6 @@ export default {
           }
         },
       ]
-    }
-  },
-  computed: {
-    filteredItems: function() {
-      var items = this.items;
-      var vm = this;
-
-      if (vm.filter_search_by !== "" && vm.filter_search_by !== "Alles") {
-        console.log("Filter search by " + this.filter_search_by);
-        items = items.filter(function(item) { return item.offer === vm.filter_search_by; });
-        console.log(items);
-      }
-
-      if (vm.filter_offer_by !== "" && vm.filter_offer_by !== "Alles") {
-        console.log("Filter offer by " + this.filter_offer_by);
-        items = items.filter(function(item) { return item.search === vm.filter_offer_by; });
-        console.log(items);
-      }
-
-      return items;
     }
   },
   methods: {
@@ -123,14 +128,6 @@ export default {
       // $.get("/api/postMessage")...
     },
 
-    filterBySearch: function(keyword) {
-      this.filter_search_by = keyword;
-    },
-
-    filterByOffer: function(keyword) {
-      this.filter_offer_by = keyword;
-    },
-
     getUserLocation: function(callback) {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(function(pos) {
@@ -147,14 +144,9 @@ export default {
     }
   },
   created: function() {
-    var vm = this;
     this.getUserLocation(function(location) {
-      vm.user_location = location;
+      console.log(location);
     })
   }
 }
 </script>
-
-<style>
-
-</style>

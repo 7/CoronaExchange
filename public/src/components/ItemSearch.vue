@@ -5,23 +5,25 @@
 
       <div class="col-12 col-md-5 col-lg-4 mb-4 mb-md-0 form-group">
         <label for="item-offer">Ich suche</label>
-        <select class="form-control" id="item-search">
-          <option>Nudeln</option>
-          <option>Toilettenpapier</option>
-          <option>Atemschutzmasken</option>
-          <option>Handschuhe</option>
-          <option>Desinfektionsmittel</option>
+        <select class="form-control" v-on:change="$emit('filterBySearch', filter_by_search)" v-model="filter_by_search" id="item-search">
+          <option value="Nudeln">Nudeln</option>
+          <option value="Toilettenpapier">Toilettenpapier</option>
+          <option value="Atemschutzmasken">Atemschutzmasken</option>
+          <option value="Handschuhe">Handschuhe</option>
+          <option value="Desinfektionsmittel">Desinfektionsmittel</option>
+          <option value="Alles">Alles</option>
         </select>
       </div>
 
       <div class="col-12 col-md-5 col-lg-4 mb-4 mb-md-0 form-group">
         <label for="item-offer">Ich biete</label>
-        <select class="form-control" id="item-offer">
-          <option>Nudeln</option>
-          <option>Toilettenpapier</option>
-          <option>Atemschutzmasken</option>
-          <option>Handschuhe</option>
-          <option>Desinfektionsmittel</option>
+        <select class="form-control" v-on:change="$emit('filterByOffer', filter_by_offer)" v-model="filter_by_offer" id="item-offer">
+          <option value="Nudeln">Nudeln</option>
+          <option value="Toilettenpapier">Toilettenpapier</option>
+          <option value="Atemschutzmasken">Atemschutzmasken</option>
+          <option value="Handschuhe">Handschuhe</option>
+          <option value="Desinfektionsmittel">Desinfektionsmittel</option>
+          <option value="Alles">Alles</option>
         </select>
       </div>
 
@@ -43,7 +45,13 @@
 <script>
 
 export default {
-  name: "ItemSearch"
+  name: "ItemSearch",
+  data: function() {
+    return {
+      filter_by_search: "",
+      filter_by_offer: ""
+    }
+  }
 }
 
 </script>
