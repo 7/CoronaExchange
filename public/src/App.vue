@@ -4,12 +4,12 @@
 
     <div class="jumbotron">
       <div class="container">
-        <ItemSearch />
+        <ItemSearch v-on:filterBySearch="filterBySearch" v-on:filterByOffer="filterByOffer" />
       </div>
     </div>
 
     <div class="container">
-      <ItemList v-bind:items="items" v-on:contactUser="contactUser" />
+      <ItemList v-bind:items="filteredItems" v-on:contactUser="contactUser" />
     </div>
 
     <div v-bind:id="contactUserId" class="modal fade" tabindex="-1" role="dialog">
@@ -53,6 +53,7 @@ export default {
   data: function() {
     return {
       contactUserId: null,
+      user_location: null,
       filter_offer_by: "",
       filter_search_by: "",
       items: [
@@ -68,7 +69,7 @@ export default {
         {
           user_id: "2",
           search: "Nudeln",
-          offer: "Toilettenpapier",
+          offer: "Atemschutzmasken",
           location: {
             long: "",
             lat: ""
@@ -76,8 +77,8 @@ export default {
         },
         {
           user_id: "3",
-          search: "Nudeln",
-          offer: "Toilettenpapier",
+          search: "Atemschutzmasken",
+          offer: "Handschuhe",
           location: {
             long: "",
             lat: ""
@@ -86,7 +87,7 @@ export default {
         {
           user_id: "4",
           search: "Nudeln",
-          offer: "Toilettenpapier",
+          offer: "Desinfektionsmittel",
           location: {
             long: "",
             lat: ""
@@ -94,8 +95,8 @@ export default {
         },
         {
           user_id: "5",
-          search: "Nudeln",
-          offer: "Toilettenpapier",
+          search: "Handschuhe",
+          offer: "Nudeln",
           location: {
             long: "",
             lat: ""
@@ -103,7 +104,7 @@ export default {
         },
         {
           user_id: "6",
-          search: "Nudeln",
+          search: "Atemschutzmasken",
           offer: "Toilettenpapier",
           location: {
             long: "",
@@ -111,6 +112,26 @@ export default {
           }
         },
       ]
+    }
+  },
+  computed: {
+    filteredItems: function() {
+      var items = this.items;
+      var vm = this;
+
+      if (vm.filter_search_by !== "" && vm.filter_search_by !== "Alles") {
+        console.log("Filter search by " + this.filter_search_by);
+        items = items.filter(function(item) { return item.offer === vm.filter_search_by; });
+        console.log(items);
+      }
+
+      if (vm.filter_offer_by !== "" && vm.filter_offer_by !== "Alles") {
+        console.log("Filter offer by " + this.filter_offer_by);
+        items = items.filter(function(item) { return item.search === vm.filter_offer_by; });
+        console.log(items);
+      }
+
+      return items;
     }
   },
   methods: {
@@ -130,6 +151,14 @@ export default {
       // $.get("/api/postMessage")...
     },
 
+    filterBySearch: function(keyword) {
+      this.filter_search_by = keyword;
+    },
+
+    filterByOffer: function(keyword) {
+      this.filter_offer_by = keyword;
+    },
+
     getUserLocation: function(callback) {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(function(pos) {
@@ -146,8 +175,9 @@ export default {
     }
   },
   created: function() {
+    var vm = this;
     this.getUserLocation(function(location) {
-      console.log(location);
+      vm.user_location = location;
     })
   }
 }
