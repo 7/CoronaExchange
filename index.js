@@ -44,8 +44,8 @@ const availableItems = [
 function byLocation(entry, topLeftLocation, lowerRightLocation) {
   lat = entry.location.lat;
   lng = entry.location.lng;
-  if (topLeftLocation.lat <= lat && lat <= lowerRightLocation.lat){
-    if (topLeftLocation.lng <= lng && lng <= lowerRightLocation.lng){
+  if (topLeftLocation.lat <= lat && lat <= lowerRightLocation.lat) {
+    if (topLeftLocation.lng <= lng && lng <= lowerRightLocation.lng) {
       return true;
     }
   }
@@ -53,16 +53,27 @@ function byLocation(entry, topLeftLocation, lowerRightLocation) {
 }
 
 function searchItems(req, res) {
-  tlSplit = req.query.topLeftLocation.split(",");
-  lrSplit = req.query.lowerRightLocation.split(",");
+  tlSplit = req.query.topLeftLocation ?
+    req.query.topLeftLocation.split(",")
+    : [];
+  lrSplit = req.query.lowerRightLocation ?
+    req.query.lowerRightLocation.split(",")
+    : [];
+
+  if (tlSplit.length != 2 || lrSplit.length != 2) {
+    res.status(400).send({
+      message: 'Invalid location data.'
+    });
+    return
+  }
 
   topLeftLocation = {
-    lat:tlSplit[0],
-    lng:tlSplit[1]
+    lat: tlSplit[0],
+    lng: tlSplit[1]
   };
   lowerRightLocation = {
-    lat:lrSplit[0],
-    lng:lrSplit[1]
+    lat: lrSplit[0],
+    lng: lrSplit[1]
   };
   sortedItems = availableItems.filter(e => byLocation(e, topLeftLocation, lowerRightLocation));
   res.end(JSON.stringify(sortedItems));
