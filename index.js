@@ -15,7 +15,7 @@ function searchItems(req, res) {
 
   if (tlSplit.length != 2 || lrSplit.length != 2) {
     res.status(400).send({
-      message: 'Invalid location data.'
+      message: 'Invalid location data. A valid request is of the form "/api/search?topLeftLocation=<latitude>,<longitude>&lowerRightLocation=<latitude>,<longitude>".'
     });
     return
   }
@@ -28,6 +28,14 @@ function searchItems(req, res) {
     lat: lrSplit[0],
     lng: lrSplit[1]
   };
+
+  if (topLeftLocation.lat >= lowerRightLocation.lat || topLeftLocation.lng >= lowerRightLocation.lng){
+    res.status(400).send({
+      message: 'Invalid location data. Top left corner coordinates are bigger than lower right corner coordinates.'
+    });
+    return
+  }
+
   items = db.itemsByLocation(topLeftLocation, lowerRightLocation);
   res.end(JSON.stringify(items));
 }
