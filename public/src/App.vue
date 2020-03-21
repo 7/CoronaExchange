@@ -22,7 +22,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <textarea name="" id="modal-text" class="form-control" rows="4">Hallo John Doe, ich würde gerne Nudeln gegen Toilettenpapier tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?</textarea>
+            <textarea name="" id="modal-text" class="form-control" rows="4">Hallo {{ contactUserId }}, ich würde gerne Nudeln gegen Toilettenpapier tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?</textarea>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
@@ -39,6 +39,7 @@
 import Navigation from "./components/Navigation.vue"
 import ItemSearch from "./components/ItemSearch"
 import ItemList from "./components/ItemList"
+import { computeDestinationPoint } from "geolib"
 import $ from "jquery"
 // import Chat from "./components/Chat"
 
@@ -54,63 +55,46 @@ export default {
     return {
       contactUserId: null,
       user_location: null,
+      perimeter_rectangle: null,
       filter_offer_by: "",
       filter_search_by: "",
       items: [
         {
-          user_id: "1",
-          search: "Nudeln",
-          offer: "Toilettenpapier",
-          location: {
-            long: "",
-            lat: ""
-          }
+            user: "Morpheus",
+            location: {
+                lat: 52.4923924,
+                lng: 13.373914
+            },
+            offer: "Toilettenpapier",
+            tradeFor: "Nudeln"
         },
         {
-          user_id: "2",
-          search: "Nudeln",
-          offer: "Atemschutzmasken",
-          location: {
-            long: "",
-            lat: ""
-          }
+            user: "Wolverine",
+            location: {
+                lat: 52.5157723,
+                lng: 13.3869281
+            },
+            offer: "Nudeln",
+            tradeFor: "Toilettenpapier"
         },
         {
-          user_id: "3",
-          search: "Atemschutzmasken",
-          offer: "Handschuhe",
-          location: {
-            long: "",
-            lat: ""
-          }
+            user: "Gandalf",
+            location: {
+                lat: 52.5670062,
+                lng: 13.3936488
+            },
+            offer: "Dosenwurst",
+            tradeFor: "Mineralwasser"
         },
         {
-          user_id: "4",
-          search: "Nudeln",
-          offer: "Desinfektionsmittel",
-          location: {
-            long: "",
-            lat: ""
-          }
-        },
-        {
-          user_id: "5",
-          search: "Handschuhe",
-          offer: "Nudeln",
-          location: {
-            long: "",
-            lat: ""
-          }
-        },
-        {
-          user_id: "6",
-          search: "Atemschutzmasken",
-          offer: "Toilettenpapier",
-          location: {
-            long: "",
-            lat: ""
-          }
-        },
+            user: "Walter White",
+            location: {
+                lat: 52.4753942,
+                lng: 13.3997043
+            },
+            offer: "Mineralwasser",
+            tradeFor: "Dosenwurst"
+        }
       ]
     }
   },
@@ -147,8 +131,6 @@ export default {
         console.error("Missing user id");
         return;
       }
-
-      // $.get("/api/postMessage")...
     },
 
     filterBySearch: function(keyword) {
@@ -163,8 +145,8 @@ export default {
       if ("geolocation" in navigator) {
         navigator.geolocation.getCurrentPosition(function(pos) {
           callback({
-            long: pos.coords.longitude,
-            lat: pos.coords.longitude
+            long: pos.coords.longitude.toFixed(2),
+            lat: pos.coords.longitude.toFixed(2)
           });
         });
       }
@@ -172,12 +154,43 @@ export default {
         var postal_code = prompt("Wir benötigen Deine ungefähre Position, um Angebote in Deiner Nähe zu finden. Bitte gib Deine PLZ an:");
         callback(postal_code);
       }
+    },
+
+    getPerimeterRectangle: function(location) {
+      var topLeftLocation = {
+        latitude: location.lat - 5,
+        longitude: location.long - 5
+      }
+
+      var bottomRightLocation = {
+        latitude: Number(location.lat) + 5,
+        longitude: Number(location.long) + 5
+      };
+
+      return {
+        topLeftLocation: topLeftLocation,
+        bottomRightLocation: bottomRightLocation
+      };
+    },
+
+    fetchItemList: function(perimeter_rectangle) {
+      console.log("Fetch item list...");
+      // var url = `/api/search?topLeftLocation=${perimeter_rectangle.topLeftLocation.latitude},${perimeter_rectangle.topLeftLocation.longitude}&lowerRightLocation=${perimeter_rectangle.bottomRightLocation.latitude},${perimeter_rectangle.bottomRightLocation.longitude}`;
+      var url = "/api/search?topLeftLocation=52,13&lowerRightLocation=54,14";
+      $.get(url).done(function(data) {
+        this.items = data;
+      }).fail(function(err) {
+        console.log(err);
+      });
     }
   },
   created: function() {
     var vm = this;
+    console.log("Retrieve user location...");
     this.getUserLocation(function(location) {
       vm.user_location = location;
+      var rectangle = vm.getPerimeterRectangle(location);
+      vm.fetchItemList(rectangle);
     })
   }
 }

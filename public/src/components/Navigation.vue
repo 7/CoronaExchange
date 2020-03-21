@@ -13,9 +13,6 @@
         <li class="nav-item">
           <a class="nav-link" href="#">Anfragen</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Account</a>
-        </li>
       </ul>
     </div>
   </nav>
