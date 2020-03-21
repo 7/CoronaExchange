@@ -4,27 +4,68 @@ const PORT = process.env.PORT || 5000
 
 const availableItems = [
   {
-    location: 79104,
-    offer: "Toilet Paper",
-    tradeFor: "Noodles"
+    user: "N. Maier",
+    location: {
+      lat: 52.4923924,
+      lng: 13.373914
+    },
+    offer: "Toiletten Papier",
+    tradeFor: "Nudeln"
   },
   {
-    location: 79111,
-    offer: "Toilet Paper",
-    tradeFor: "Noodles"
+    user: "H. Müller",
+    location: {
+      lat: 52.5157723,
+      lng: 13.3869281
+    },
+    offer: "Nudeln",
+    tradeFor: "Toiletten Papier"
+  },
+  {
+    user: "A. Schmidt",
+    location: {
+      lat: 52.5670062,
+      lng: 13.3936488
+    },
+    offer: "Dosenwurst",
+    tradeFor: "Mineralwasser"
+  },
+  {
+    user: "B. Brand",
+    location: {
+      lat: 52.4753942,
+      lng: 13.3997043
+    },
+    offer: "Mineralwasser",
+    tradeFor: "Dosenwurst"
   }
 ];
 
-function orderByLocation(a, b, zipcode) {
-  relativeLocationA = Math.abs(a.location - zipcode)
-  relativeLocationB = Math.abs(b.location - zipcode)
-  return relativeLocationA >= relativeLocationB ? 1 : -1;
+function byLocation(entry, topLeftLocation, lowerRightLocation) {
+  lat = entry.location.lat;
+  lng = entry.location.lng;
+  if (topLeftLocation.lat <= lat && lat <= lowerRightLocation.lat){
+    if (topLeftLocation.lng <= lng && lng <= lowerRightLocation.lng){
+      return true;
+    }
+  }
+  return false;
 }
 
 function searchItems(req, res) {
-  zipcode = req.query.zipcode;
-  sortedItems = availableItems.sort((a, b) => orderByLocation(a, b, zipcode))
-  res.end(JSON.stringify(sortedItems))
+  tlSplit = req.query.topLeftLocation.split(",");
+  lrSplit = req.query.lowerRightLocation.split(",");
+
+  topLeftLocation = {
+    lat:tlSplit[0],
+    lng:tlSplit[1]
+  };
+  lowerRightLocation = {
+    lat:lrSplit[0],
+    lng:lrSplit[1]
+  };
+  sortedItems = availableItems.filter(e => byLocation(e, topLeftLocation, lowerRightLocation));
+  res.end(JSON.stringify(sortedItems));
 }
 
 express()
