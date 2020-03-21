@@ -12,13 +12,13 @@
           </tr>
         </thead>
         <tbody>
-            <tr v-for="(item, index) in items" v-bind:key="item.user_id">
-              <th scope="col">{{ item.user_id }}</th>
+            <tr v-for="(item, index) in items" v-bind:key="item.user">
+              <th scope="col">{{ item.user }}</th>
               <td>{{ item.offer }}</td>
-              <td>{{ item.search }}</td>
+              <td>{{ item.tradeFor }}</td>
               <td>15 Km</td>
               <td>
-                <button type="button" class="btn btn-warning" v-on:click="$emit('contactUser', item.user_id)">Kontaktieren</button>
+                <button type="button" class="btn btn-warning" v-on:click="$emit('contactUser', item.user)">Kontaktieren</button>
               </td>
             </tr>
         </tbody>

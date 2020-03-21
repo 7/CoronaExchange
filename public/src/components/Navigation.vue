@@ -7,8 +7,9 @@
 
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ml-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Produkte finden <span class="sr-only">(current)</span></a>
+        <li class="nav-item">
+          <!-- <a class="nav-link" href="#">Produkte finden <span class="sr-only">(current)</span></a> -->
+          <router-link :to="{path: '/'}" class="nav-link">Produkte finden</router-link>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="#">Anfragen</a>
