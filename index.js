@@ -2,8 +2,8 @@ const express = require('express')
 const path = require('path')
 const PORT = process.env.PORT || 5000
 
-var mockdb = require("./mockdb")
-var db = new mockdb.mockDb()
+const mockdb = require("./mockdb")
+var db = new mockdb.mockDb(mockdb.availableItems)
 
 function searchItems(req, res) {
   tlSplit = req.query.topLeftLocation ?
