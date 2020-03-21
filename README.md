@@ -112,3 +112,24 @@ For more information about using Node.js on Heroku, see these Dev Center article
 ### Firebase for Authentication
 
 We decided to use the Google service Firebase to support social login authentication.
+
+### Generate .json test data
+
+The offerings-berlin.json contains sample data in and around Berlin.
+The test data was generated with https://www.json-generator.com/# by using the following query:
+
+```
+[
+  '{{repeat(10000)}}',
+  {
+    _id: '{{objectId()}}',
+    name: '{{firstName()}}',
+    location: {
+      lat: '{{floating(52.354002, 52.622138)}}',
+      lng: '{{floating(13.220354, 13.739104)}}'
+    },
+    offer: '{{random("Toilettenpapier","Nudeln","Seife","Tomatensoße","Windeln","Apfelmus","Milch","Eier","Hefe")}}',
+    tradeFor: '{{random("Toilettenpapier","Nudeln","Seife","Tomatensoße","Windeln","Apfelmus","Milch","Eier","Hefe")}}'
+  }
+]
+```
