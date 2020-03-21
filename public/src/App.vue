@@ -1,5 +1,6 @@
 <template>
   <div id="app" class="landing">
+    
     <Navigation />
 <router-view></router-view>
     <!--  -->
