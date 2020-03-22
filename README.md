@@ -65,7 +65,19 @@ http://localhost:5000/api/search?topLeftLocation=52.5,13&lowerRightLocation=54,1
 ]
 ```
 
----
+### POST /api/chat/:participantId
+
+#### Example Request body:
+
+```json
+{
+    "message":"Hello!"
+}
+```
+
+#### Response
+
+If the message was posted successfully, the endpoint will return `200 OK`.
 
 ## Technology Decisions
 

@@ -32,7 +32,7 @@ function searchItems(req, res) {
     lng: lrSplit[1]
   };
 
-  if (topLeftLocation.lat >= lowerRightLocation.lat || topLeftLocation.lng >= lowerRightLocation.lng){
+  if (topLeftLocation.lat >= lowerRightLocation.lat || topLeftLocation.lng >= lowerRightLocation.lng) {
     res.status(400).send({
       message: 'Invalid location data. Top left corner coordinates are bigger than lower right corner coordinates.'
     });
@@ -50,8 +50,26 @@ function chatMessages(req, res) {
   res.end(JSON.stringify(chatMessages));
 }
 
+// chat id aus hash beider namen
+
+function newMessage(req, res) {
+  me = "Gandalf"
+  participant = req.params.participantId;
+  message = {
+    from: me,
+    to: participant,
+    date: new Date(),
+    message: req.body.message
+  };
+
+  db.availableMessages.push(message)
+  res.sendStatus(200);
+}
+
 express()
   .use(express.static(path.join(__dirname, 'public/dist')))
+  .use(express.json())
   .get('/api/search', searchItems)
   .get('/api/chat/:participantId', chatMessages) // auth.checkIfAuthenticated
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+  .post('/api/chat/:participantId', newMessage) // auth.checkIfAuthenticated
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));
