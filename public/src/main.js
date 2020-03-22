@@ -4,6 +4,23 @@ import Vue from 'vue'
 import App from './App.vue'
 import * as firebase from "firebase"
 import VueRouter from 'vue-router'
+import VueGlobalVariable from 'vue-global-var'
+import Modal from 'vue-js-modal'
+import * as firebaseui from 'firebaseui'
+import "firebaseui/dist/firebaseui.css";
+import ModalPlugin from './modalPlugin.js'
+import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+
+Vue.use(BootstrapVue)
+Vue.use(BootstrapVueIcons)
+
+Vue.use(ModalPlugin)
+
+Vue.use(VueGlobalVariable, {
+  globals:{
+    showModal:false
+  }
+})
 Vue.use(VueRouter)
 
 /* Import Components for Router */
