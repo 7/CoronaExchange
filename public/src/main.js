@@ -27,6 +27,7 @@ Vue.use(VueRouter)
 import RegisterComponent from './components/Authentication/Register.vue'
 import LoginComponent from './components/Authentication/Login.vue'
 import LandingComponent from './components/LandingPage.vue'
+import ChatComponent from './components/Chat.vue'
 
 Vue.config.productionTip = false
 
@@ -46,7 +47,9 @@ const router = new VueRouter({
   routes: [
     { path: '/', component: LandingComponent},
   { path: '/login', component: LoginComponent },
-  { path: '/register', component: RegisterComponent }
+  { path: '/register', component: RegisterComponent },
+  {path: '/Chat', component: ChatComponent}
+
   ]
   })
 
