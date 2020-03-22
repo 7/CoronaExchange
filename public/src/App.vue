@@ -4,7 +4,7 @@
     <Navigation />
 
     <router-view></router-view>
-    
+    <login-modal/>
   </div>
 </template>
 
@@ -15,6 +15,9 @@ export default {
   name: 'App',
   components: {
     Navigation,
+  },
+  mounted(){
+    this.$modal.show();
   }
 }
 </script>

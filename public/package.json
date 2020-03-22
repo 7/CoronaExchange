@@ -8,9 +8,11 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "bootstrap-vue": "^2.7.0",
     "core-js": "^3.6.4",
     "firebase": "^7.12.0",
     "firebaseui": "^4.5.0",
+    "geolib": "^3.2.1",
     "vue": "^2.6.11",
     "vue-global-var": "^1.0.0",
     "vue-js-modal": "^1.3.33",
