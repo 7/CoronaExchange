@@ -25,7 +25,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
-            <button type="button" class="btn btn-primary">Nachricht senden</button>
+            <button type="button" class="btn btn-primary" style="background-color: #668659;">Nachricht senden</button>
           </div>
         </div>
       </div>

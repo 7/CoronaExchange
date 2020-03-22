@@ -1,9 +1,9 @@
 <template>
-  <div id="app" class="landing">
+  <div id="app" class="landing" style="min-height:100vh; background-color:#b8bfbb;">
     
-    <Navigation />
+    <Navigation class="frame" style="min-height:5vh"/>
 
-    <router-view></router-view>
+    <router-view class="frame" style="min-height:95vh"></router-view>
     <login-modal/>
   </div>
 </template>
@@ -23,5 +23,10 @@ export default {
 </script>
 
 <style>
-
+.frame{
+  max-width:1200px;
+  margin:auto;
+  background-color: white;
+  
+}
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #33443c !important;">
     <router-link :to="{path: '/'}">CoronaExchange</router-link>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -24,3 +24,18 @@
     </div>
   </nav>
 </template>
+
+<script>
+export default {
+  methods:{
+    showModal(){
+      this.$modal.show();
+    }
+  }
+}
+</script>
+<style scoped>
+.nav-link{
+  color: white !important;
+}
+</style>
