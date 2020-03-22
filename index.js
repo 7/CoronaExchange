@@ -44,7 +44,7 @@ function searchItems(req, res) {
 }
 
 function chatMessages(req, res) {
-  me = "KhxRmzKFILT8ziEwDhPJZd65lnq1"; // gandalf
+  me = req.authId;
   participant = req.params.participantId;
   chatMessages = db.chatMessagesBetweenUsers(me, participant);
   res.end(JSON.stringify(chatMessages));
@@ -53,7 +53,7 @@ function chatMessages(req, res) {
 // chat id aus hash beider namen
 
 function newMessage(req, res) {
-  me = "KhxRmzKFILT8ziEwDhPJZd65lnq1"; // gandalf
+  me = req.authId;
   participant = req.params.participantId;
   message = {
     from: me,
@@ -70,6 +70,6 @@ express()
   .use(express.static(path.join(__dirname, 'public/dist')))
   .use(express.json())
   .get('/api/search', searchItems)
-  .get('/api/chat/:participantId', chatMessages) // auth.checkIfAuthenticated
-  .post('/api/chat/:participantId', newMessage) // auth.checkIfAuthenticated
+  .get('/api/chat/:participantId', auth.checkIfAuthenticated, chatMessages)
+  .post('/api/chat/:participantId', auth.checkIfAuthenticated, newMessage)
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
