@@ -6,7 +6,7 @@ const auth = require('./authentication')
 
 const offeringsMockData = require('./offerings-berlin.json')
 const mockdb = require('./mockdb')
-var db = new mockdb.mockDb(offeringsMockData)
+var db = new mockdb.mockDb(offeringsMockData, mockdb.availableMessages)
 
 function searchItems(req, res) {
   tlSplit = req.query.topLeftLocation ?
@@ -43,7 +43,15 @@ function searchItems(req, res) {
   res.end(JSON.stringify(items));
 }
 
+function chatMessages(req, res) {
+  me = "Gandalf"
+  participant = req.params.participantId;
+  chatMessages = db.chatMessagesBetweenUsers(me, participant);
+  res.end(JSON.stringify(chatMessages));
+}
+
 express()
   .use(express.static(path.join(__dirname, 'public/dist')))
   .get('/api/search', searchItems)
+  .get('/api/chat/:participantId', chatMessages) // auth.checkIfAuthenticated
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));

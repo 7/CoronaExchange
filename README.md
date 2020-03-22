@@ -132,16 +132,23 @@ The test data was generated with https://www.json-generator.com/# by using the f
 
 ```
 [
-  '{{repeat(10000)}}',
+  '{{repeat(1000)}}',
   {
     _id: '{{objectId()}}',
-    name: '{{firstName()}}',
+    userId: '{{random("4UfWXtocrIVst8ibYw1Nu2CqHQC2", "KhxRmzKFILT8ziEwDhPJZd65lnq1", "sJoqxWyKobTJZp3LAEoZlcyccKg1", "PdWOFNsvMRZRogZQdFxd2oywsAH2")}}',
     location: {
       lat: '{{floating(52.354002, 52.622138)}}',
       lng: '{{floating(13.220354, 13.739104)}}'
     },
-    offer: '{{random("Toilettenpapier","Nudeln","Seife","Tomatensoße","Windeln","Apfelmus","Milch","Eier","Hefe")}}',
-    tradeFor: '{{random("Toilettenpapier","Nudeln","Seife","Tomatensoße","Windeln","Apfelmus","Milch","Eier","Hefe")}}'
+    offer: '{{random("Nudeln", "Toilettenpapier","Mineralwasser","Dosenwurst")}}',
+    tradeFor: '{{random("Nudeln", "Toilettenpapier","Mineralwasser","Dosenwurst")}}'
   }
 ]
 ```
+
+The test users are:
+
+* wolverine@xmen.test (userId:4UfWXtocrIVst8ibYw1Nu2CqHQC2)
+* gandalf@lofr.test (userId: KhxRmzKFILT8ziEwDhPJZd65lnq1)
+* walter@breakingb.test (userId: sJoqxWyKobTJZp3LAEoZlcyccKg1)
+* morpheus@matrix.test (userId: PdWOFNsvMRZRogZQdFxd2oywsAH2)
