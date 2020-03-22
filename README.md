@@ -65,7 +65,62 @@ http://localhost:5000/api/search?topLeftLocation=52.5,13&lowerRightLocation=54,1
 ]
 ```
 
----
+### GET /api/chat/:participantId
+
+This requires a valid authentication token from Firebase. The user id is determined from the token.
+
+#### Example Request:
+
+```
+http://localhost:5000/api/chat/KhxRmzKFILT8ziEwDhPJZd65lnq1
+```
+
+#### Example Response:
+
+```json
+[
+    {
+        "from": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
+        "to": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
+        "date": "2020-03-20T12:22:38 -00:00",
+        "text": "Hi Walter. Ich interessiere mich für dein Mineralwasser. Ich hätte Dosenwurst im Austausch."
+    },
+    {
+        "from": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
+        "to": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
+        "date": "2020-03-20T14:12:32 -00:00",
+        "text": "Gerne. Wann können wir die Waren austauschen?"
+    },
+    {
+        "from": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
+        "to": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
+        "date": "2020-03-20T14:13:23 -00:00",
+        "text": "In 10 min beim Kiosk an der Ecke."
+    },
+    {
+        "from": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
+        "to": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
+        "date": "2020-03-20T14:15:00 -00:00",
+        "text": "Ok. Bis gleich."
+    }
+]
+```
+
+### POST /api/chat/:participantId
+
+This requires a valid authentication token from Firebase. The user id is determined from the token.
+
+#### Example Request body:
+
+```json
+{
+    "message":"Hello!"
+}
+```
+
+#### Response
+
+If the message was posted successfully, the endpoint will return `200 OK`.
 
 ## Technology Decisions
 
@@ -132,16 +187,23 @@ The test data was generated with https://www.json-generator.com/# by using the f
 
 ```
 [
-  '{{repeat(10000)}}',
+  '{{repeat(1000)}}',
   {
     _id: '{{objectId()}}',
-    name: '{{firstName()}}',
+    userId: '{{random("4UfWXtocrIVst8ibYw1Nu2CqHQC2", "KhxRmzKFILT8ziEwDhPJZd65lnq1", "sJoqxWyKobTJZp3LAEoZlcyccKg1", "PdWOFNsvMRZRogZQdFxd2oywsAH2")}}',
     location: {
       lat: '{{floating(52.354002, 52.622138)}}',
       lng: '{{floating(13.220354, 13.739104)}}'
     },
-    offer: '{{random("Toilettenpapier","Nudeln","Seife","Tomatensoße","Windeln","Apfelmus","Milch","Eier","Hefe")}}',
-    tradeFor: '{{random("Toilettenpapier","Nudeln","Seife","Tomatensoße","Windeln","Apfelmus","Milch","Eier","Hefe")}}'
+    offer: '{{random("Nudeln", "Toilettenpapier","Mineralwasser","Dosenwurst")}}',
+    tradeFor: '{{random("Nudeln", "Toilettenpapier","Mineralwasser","Dosenwurst")}}'
   }
 ]
 ```
+
+The test users are:
+
+* wolverine@xmen.test (userId:4UfWXtocrIVst8ibYw1Nu2CqHQC2)
+* gandalf@lofr.test (userId: KhxRmzKFILT8ziEwDhPJZd65lnq1)
+* walter@breakingb.test (userId: sJoqxWyKobTJZp3LAEoZlcyccKg1)
+* morpheus@matrix.test (userId: PdWOFNsvMRZRogZQdFxd2oywsAH2)
