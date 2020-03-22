@@ -3,7 +3,7 @@
 
     <div class="jumbotron">
       <div class="container">
-        <ItemSearch v-on:filterBySearch="filterBySearch" v-on:filterByOffer="filterByOffer" />
+        <ItemSearch  v-bind:searchFilter="filterKeywords.searchFilter" v-bind:offeringsFilter="filterKeywords.offeringsFilter" v-on:filterBySearch="filterBySearch" v-on:filterByOffer="filterByOffer" />
       </div>
     </div>
 
@@ -11,7 +11,7 @@
       <ItemList v-bind:items="filteredItems" v-on:contactUser="contactUser" />
     </div>
 
-    <div v-bind:id="contactUserId" class="modal fade" tabindex="-1" role="dialog">
+    <div v-bind:id="selectedUser._id" class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -21,7 +21,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <textarea name="" id="modal-text" class="form-control" rows="4">Hallo {{ contactUserId }}, ich würde gerne Nudeln gegen Toilettenpapier tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?</textarea>
+            <textarea name="" id="modal-text" class="form-control" rows="4">Hallo {{ selectedUser.name }}, ich würde gerne Nudeln gegen Toilettenpapier tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?</textarea>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
@@ -50,49 +50,15 @@ export default {
   },
   data: function() {
     return {
-      contactUserId: null,
+      selectedUser: {
+        _id: null,
+        name: ""
+      },
       user_location: null,
       perimeter_rectangle: null,
       filter_offer_by: "",
       filter_search_by: "",
-      items: [
-        {
-            user: "Morpheus",
-            location: {
-                lat: 52.4923924,
-                lng: 13.373914
-            },
-            offer: "Toilettenpapier",
-            tradeFor: "Nudeln"
-        },
-        {
-            user: "Wolverine",
-            location: {
-                lat: 52.5157723,
-                lng: 13.3869281
-            },
-            offer: "Nudeln",
-            tradeFor: "Toilettenpapier"
-        },
-        {
-            user: "Gandalf",
-            location: {
-                lat: 52.5670062,
-                lng: 13.3936488
-            },
-            offer: "Dosenwurst",
-            tradeFor: "Mineralwasser"
-        },
-        {
-            user: "Walter White",
-            location: {
-                lat: 52.4753942,
-                lng: 13.3997043
-            },
-            offer: "Mineralwasser",
-            tradeFor: "Dosenwurst"
-        }
-      ]
+      items: []
     }
   },
   computed: {
@@ -103,24 +69,41 @@ export default {
       if (vm.filter_search_by !== "" && vm.filter_search_by !== "Alles") {
         console.log("Filter search by " + this.filter_search_by);
         items = items.filter(function(item) { return item.offer === vm.filter_search_by; });
-        console.log(items);
       }
 
       if (vm.filter_offer_by !== "" && vm.filter_offer_by !== "Alles") {
         console.log("Filter offer by " + this.filter_offer_by);
-        items = items.filter(function(item) { return item.search === vm.filter_offer_by; });
-        console.log(items);
+        items = items.filter(function(item) { return item.tradeFor === vm.filter_offer_by; });
       }
 
       return items;
+    },
+
+    filterKeywords: function() {
+      var searchFilter = [];
+      var offeringsFilter = [];
+
+      this.items.map(function(item) {
+        if (searchFilter.indexOf(item.offer) === -1) {
+          searchFilter.push(item.offer);
+        }
+        if (offeringsFilter.indexOf(item.tradeFor) === -1) {
+          offeringsFilter.push(item.tradeFor);
+        }
+      });
+
+      return {
+        searchFilter: searchFilter,
+        offeringsFilter: offeringsFilter
+      };
     }
   },
   methods: {
-    contactUser: function(userId) {
-      this.contactUserId = userId;
+    contactUser: function(user) {
+      this.selectedUser = user;
       $(".modal").modal();
       $("#modal-text").focus();
-      console.log("Set user id to " + userId);
+      console.log("Set user id to " + user._id);
     },
 
     sendMessage: function() {
@@ -172,10 +155,11 @@ export default {
 
     fetchItemList: function(perimeter_rectangle) {
       console.log("Fetch item list...");
+      var vm = this;
       // var url = `/api/search?topLeftLocation=${perimeter_rectangle.topLeftLocation.latitude},${perimeter_rectangle.topLeftLocation.longitude}&lowerRightLocation=${perimeter_rectangle.bottomRightLocation.latitude},${perimeter_rectangle.bottomRightLocation.longitude}`;
-      var url = "/api/search?topLeftLocation=52,13&lowerRightLocation=54,14";
-      $.get(url).done(function(data) {
-        this.items = data;
+      var url = "/api/search?topLeftLocation=52.41,13.41&lowerRightLocation=52.42,13.42";
+      $.getJSON(url).done(function(data) {
+        vm.items = data;
       }).fail(function(err) {
         console.log(err);
       });
