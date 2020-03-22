@@ -2,6 +2,18 @@
 
 This app allows people to find items they need urgently (and cannot buy, as they are currently sold out) and trade for them with items they have too much of.
 
+## Setup
+
+To setup and run a local instance execute the following commands:
+
+```bash
+$ npm install
+$ cd public
+$ npm install
+$ cd ..
+$ npm start
+```
+
 ## Use cases
 
 ### Trade items
@@ -67,7 +79,7 @@ Node.js is easy to setup and learn. Additionally it allows frontend developers w
 
 ### Heroku for deployment
 
-Free to use.
+Free to use. The following is an excerpt from the Heroku example project `getting-started-with-nodejs`.
 
 #### node-js-getting-started
 
@@ -112,3 +124,24 @@ For more information about using Node.js on Heroku, see these Dev Center article
 ### Firebase for Authentication
 
 We decided to use the Google service Firebase to support social login authentication.
+
+### Generate .json test data
+
+The offerings-berlin.json contains sample data in and around Berlin.
+The test data was generated with https://www.json-generator.com/# by using the following query:
+
+```
+[
+  '{{repeat(10000)}}',
+  {
+    _id: '{{objectId()}}',
+    name: '{{firstName()}}',
+    location: {
+      lat: '{{floating(52.354002, 52.622138)}}',
+      lng: '{{floating(13.220354, 13.739104)}}'
+    },
+    offer: '{{random("Toilettenpapier","Nudeln","Seife","Tomatensoße","Windeln","Apfelmus","Milch","Eier","Hefe")}}',
+    tradeFor: '{{random("Toilettenpapier","Nudeln","Seife","Tomatensoße","Windeln","Apfelmus","Milch","Eier","Hefe")}}'
+  }
+]
+```
