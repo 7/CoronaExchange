@@ -21,7 +21,7 @@
             </button>
           </div>
           <div class="modal-body">
-            <textarea name="" id="modal-text" class="form-control" rows="4">Hallo {{ selectedUser.name }}, ich würde gerne Nudeln gegen Toilettenpapier tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?</textarea>
+            <textarea name="" id="modal-text" class="form-control" rows="4">Hallo {{ selectedUser.name }}, ich würde gerne {{ selectedUser.tradeFor }} gegen {{ selectedUser.offer }} tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?</textarea>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
