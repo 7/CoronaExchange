@@ -65,7 +65,50 @@ http://localhost:5000/api/search?topLeftLocation=52.5,13&lowerRightLocation=54,1
 ]
 ```
 
+### GET /api/chat/:participantId
+
+This requires a valid authentication token from Firebase. The user id is determined from the token.
+
+#### Example Request:
+
+```
+http://localhost:5000/api/chat/KhxRmzKFILT8ziEwDhPJZd65lnq1
+```
+
+#### Example Response:
+
+```json
+[
+    {
+        "from": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
+        "to": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
+        "date": "2020-03-20T12:22:38 -00:00",
+        "text": "Hi Walter. Ich interessiere mich für dein Mineralwasser. Ich hätte Dosenwurst im Austausch."
+    },
+    {
+        "from": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
+        "to": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
+        "date": "2020-03-20T14:12:32 -00:00",
+        "text": "Gerne. Wann können wir die Waren austauschen?"
+    },
+    {
+        "from": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
+        "to": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
+        "date": "2020-03-20T14:13:23 -00:00",
+        "text": "In 10 min beim Kiosk an der Ecke."
+    },
+    {
+        "from": "sJoqxWyKobTJZp3LAEoZlcyccKg1",
+        "to": "KhxRmzKFILT8ziEwDhPJZd65lnq1",
+        "date": "2020-03-20T14:15:00 -00:00",
+        "text": "Ok. Bis gleich."
+    }
+]
+```
+
 ### POST /api/chat/:participantId
+
+This requires a valid authentication token from Firebase. The user id is determined from the token.
 
 #### Example Request body:
 
