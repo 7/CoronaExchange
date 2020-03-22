@@ -4,8 +4,9 @@ const PORT = process.env.PORT || 5000
 
 const auth = require('./authentication')
 
+const offeringsMockData = require('./offerings-berlin.json')
 const mockdb = require('./mockdb')
-var db = new mockdb.mockDb(mockdb.availableItems)
+var db = new mockdb.mockDb(offeringsMockData)
 
 function searchItems(req, res) {
   tlSplit = req.query.topLeftLocation ?
@@ -44,5 +45,5 @@ function searchItems(req, res) {
 
 express()
   .use(express.static(path.join(__dirname, 'public/dist')))
-  .get('/api/search', auth.checkIfAuthenticated, searchItems)
+  .get('/api/search', searchItems)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`));
