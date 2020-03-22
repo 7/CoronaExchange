@@ -6,7 +6,7 @@ const auth = require('./authentication')
 
 const offeringsMockData = require('./offerings-berlin.json')
 const mockdb = require('./mockdb')
-var db = new mockdb.mockDb(offeringsMockData)
+var db = new mockdb.mockDb(offeringsMockData, mockdb.availableMessages)
 
 function searchItems(req, res) {
   tlSplit = req.query.topLeftLocation ?
@@ -32,18 +32,47 @@ function searchItems(req, res) {
     lng: lrSplit[1]
   };
 
-  if (topLeftLocation.lat >= lowerRightLocation.lat || topLeftLocation.lng >= lowerRightLocation.lng){
+  if (topLeftLocation.lat >= lowerRightLocation.lat || topLeftLocation.lng >= lowerRightLocation.lng) {
     res.status(400).send({
       message: 'Invalid location data. Top left corner coordinates are bigger than lower right corner coordinates.'
     });
     return
   }
 
-  items = db.itemsByLocation(topLeftLocation, lowerRightLocation);
-  res.end(JSON.stringify(items));
+  items = db.itemsByLocation(topLeftLocation, lowerRightLocation);  
+  jsonResponse(res, items);
+}
+
+function chatMessages(req, res) {
+  me = req.authId;
+  participant = req.params.participantId;
+  chatMessages = db.chatMessagesBetweenUsers(me, participant);
+  jsonResponse(res, chatMessages);
+}
+
+function jsonResponse(res, obj){
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');  
+  res.end(JSON.stringify(obj));
+}
+
+function newMessage(req, res) {
+  me = req.authId;
+  participant = req.params.participantId;
+  message = {
+    from: me,
+    to: participant,
+    date: new Date(),
+    message: req.body.message
+  };
+
+  db.availableMessages.push(message)  
+  res.sendStatus(200);
 }
 
 express()
   .use(express.static(path.join(__dirname, 'public/dist')))
+  .use(express.json())
   .get('/api/search', searchItems)
-  .listen(PORT, () => console.log(`Listening on ${ PORT }`));
+  .get('/api/chat/:participantId', auth.checkIfAuthenticated, chatMessages)
+  .post('/api/chat/:participantId', auth.checkIfAuthenticated, newMessage)
+  .listen(PORT, () => console.log(`Listening on ${PORT}`));

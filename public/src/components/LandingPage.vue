@@ -1,6 +1,8 @@
 <template>
   <div id="app" class="landing">
 
+    <MapView v-bind:items="filteredItems"></MapView>
+
     <div class="jumbotron">
       <div class="container">
         <ItemSearch  v-bind:searchFilter="filterKeywords.searchFilter" v-bind:offeringsFilter="filterKeywords.offeringsFilter" v-on:filterBySearch="filterBySearch" v-on:filterByOffer="filterByOffer" />
@@ -10,8 +12,6 @@
     <div class="container">
       <ItemList v-bind:items="filteredItems" v-on:contactUser="contactUser" />
     </div>
-
-    <MapView v-bind:items="filteredItems"></MapView>
 
     <div v-bind:id="contactUserId" class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-dialog-scrollable" role="document">
@@ -23,11 +23,11 @@
             </button>
           </div>
           <div class="modal-body">
-            <textarea name="" id="modal-text" class="form-control" rows="4">Hallo {{ selectedUser.name }}, ich würde gerne Nudeln gegen Toilettenpapier tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?</textarea>
+            <textarea name="" id="modal-text" class="form-control" rows="4">Hallo, ich würde gerne {{ selectedUser.tradeFor }} gegen {{ selectedUser.offer }} tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?</textarea>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
-            <button type="button" class="btn btn-primary">Nachricht senden</button>
+            <button type="button" class="btn btn-primary" style="background-color: #668659;">Nachricht senden</button>
           </div>
         </div>
       </div>
@@ -142,13 +142,13 @@ export default {
 
     getPerimeterRectangle: function(location) {
       var topLeftLocation = {
-        latitude: location.lat - 5,
-        longitude: location.long - 5
+        latitude: location.lat - 20,
+        longitude: location.long - 20
       }
 
       var bottomRightLocation = {
-        latitude: Number(location.lat) + 5,
-        longitude: Number(location.long) + 5
+        latitude: Number(location.lat) + 20,
+        longitude: Number(location.long) + 20
       };
 
       return {
@@ -161,8 +161,10 @@ export default {
       console.log("Fetch item list...");
       var vm = this;
       // var url = `/api/search?topLeftLocation=${perimeter_rectangle.topLeftLocation.latitude},${perimeter_rectangle.topLeftLocation.longitude}&lowerRightLocation=${perimeter_rectangle.bottomRightLocation.latitude},${perimeter_rectangle.bottomRightLocation.longitude}`;
-      var url = "/api/search?topLeftLocation=52.41,13.41&lowerRightLocation=52.42,13.42";
+      var url = "/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
       $.getJSON(url).done(function(data) {
+        console.log("Fetched item data");
+        console.log(data);
         vm.items = data;
       }).fail(function(err) {
         console.log(err);

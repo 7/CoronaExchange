@@ -32,8 +32,8 @@
     },
     data() {
       return {
-        zoom: 13,
-        center: L.latLng(52.41349, 13.416722),
+        zoom: 12,
+        center: L.latLng(52.41349, 13.416732),
         url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       }
     },
