@@ -11,7 +11,9 @@
       <ItemList v-bind:items="filteredItems" v-on:contactUser="contactUser" />
     </div>
 
-    <div v-bind:id="selectedUser._id" class="modal fade" tabindex="-1" role="dialog">
+    <MapView v-bind:items="filteredItems"></MapView>
+
+    <div v-bind:id="contactUserId" class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -40,13 +42,15 @@ import ItemSearch from "./ItemSearch"
 import ItemList from "./ItemList"
 import { computeDestinationPoint } from "geolib"
 import $ from "jquery"
+import MapView from "./MapView";
 
 export default {
   name: 'LandingPage',
   components: {
     Navigation,
     ItemSearch,
-    ItemList
+    ItemList,
+    MapView
   },
   data: function() {
     return {
