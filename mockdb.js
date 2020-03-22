@@ -38,9 +38,8 @@ module.exports = {
             tradeFor: "Dosenwurst"
         }],
 
-    mockDb: function (jsonFile) {
-        var contents = fs.readFileSync(jsonFile);
-        this.availableItems = JSON.parse(contents);
+    mockDb: function (items) {
+        this.availableItems = items;
         this.itemsByLocation = function (topLeftLocation, lowerRightLocation) {
             return this.availableItems.filter(e => byLocation(e, topLeftLocation, lowerRightLocation));
         }

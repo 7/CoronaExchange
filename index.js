@@ -4,8 +4,9 @@ const PORT = process.env.PORT || 5000
 
 const auth = require('./authentication')
 
+const offeringsMockData = require('./offerings-berlin.json')
 const mockdb = require('./mockdb')
-var db = new mockdb.mockDb('offerings-berlin.json')
+var db = new mockdb.mockDb(offeringsMockData)
 
 function searchItems(req, res) {
   tlSplit = req.query.topLeftLocation ?
