@@ -39,18 +39,21 @@ function searchItems(req, res) {
     return
   }
 
-  items = db.itemsByLocation(topLeftLocation, lowerRightLocation);
-  res.end(JSON.stringify(items));
+  items = db.itemsByLocation(topLeftLocation, lowerRightLocation);  
+  jsonResponse(res, items);
 }
 
 function chatMessages(req, res) {
   me = req.authId;
   participant = req.params.participantId;
   chatMessages = db.chatMessagesBetweenUsers(me, participant);
-  res.end(JSON.stringify(chatMessages));
+  jsonResponse(res, chatMessages);
 }
 
-// chat id aus hash beider namen
+function jsonResponse(res, obj){
+  res.setHeader('Content-Type', 'application/json; charset=utf-8');  
+  res.end(JSON.stringify(obj));
+}
 
 function newMessage(req, res) {
   me = req.authId;
@@ -62,7 +65,7 @@ function newMessage(req, res) {
     message: req.body.message
   };
 
-  db.availableMessages.push(message)
+  db.availableMessages.push(message)  
   res.sendStatus(200);
 }
 
