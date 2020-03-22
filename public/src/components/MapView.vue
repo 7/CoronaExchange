@@ -32,17 +32,14 @@
     },
     data() {
       return {
-        zoom: 10,
-        center: L.latLng(52.4923924, 13.372882),
+        zoom: 13,
+        center: L.latLng(52.41349, 13.416722),
         url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
       }
     },
     computed: {
       mapItems() {
-        return this.items.map(i => {
-          console.log(i.location);
-          return Object.assign({latlng: L.latLng(i.location.lat, i.location.lng)}, i);
-        })
+        return this.items.map(i => Object.assign({latlng: L.latLng(i.location.lat, i.location.lng)}, i))
       }
     },
   }
