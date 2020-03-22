@@ -44,7 +44,7 @@ function searchItems(req, res) {
 }
 
 function chatMessages(req, res) {
-  me = "Gandalf"
+  me = "KhxRmzKFILT8ziEwDhPJZd65lnq1"; // gandalf
   participant = req.params.participantId;
   chatMessages = db.chatMessagesBetweenUsers(me, participant);
   res.end(JSON.stringify(chatMessages));
@@ -53,7 +53,7 @@ function chatMessages(req, res) {
 // chat id aus hash beider namen
 
 function newMessage(req, res) {
-  me = "Gandalf"
+  me = "KhxRmzKFILT8ziEwDhPJZd65lnq1"; // gandalf
   participant = req.params.participantId;
   message = {
     from: me,
