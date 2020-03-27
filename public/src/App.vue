@@ -13,6 +13,9 @@ import Navigation from "./components/Navigation.vue"
 
 export default {
   name: 'App',
+  created (){
+    document.title = "Corona Exchange";
+  },
   components: {
     Navigation,
   },
