@@ -17,7 +17,7 @@ export default {
     Navigation,
   },
   mounted(){
-    this.$modal.show();
+    
   }
 }
 </script>

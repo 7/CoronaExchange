@@ -2,12 +2,13 @@
 
   <div class="modal-wrapper" v-if="visible">
     
-  <div v-if="login">
+  <div v-if="loginMethods">
     <p class="closeModal h2 mb-2" v-on:click="hide()"><b-icon icon="x-square-fill"></b-icon></p>
-    <section id="firebaseui-auth-container"></section>
-    <div class="firebaseui-container firebaseui-page-provider-sign-in firebaseui-id-page-provider-sign-in firebaseui-use-spinner">
-        <div class="firebaseui-card-content" style="text-align-last:center;">
-    <button class="Signup firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-password firebaseui-id-idp-button" v-on:click="ToggleRegister()">Sign up</button></div>
+
+    <div class="firebaseui-card-content" style="text-align-last:center;">
+      <button class="Signup firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-password firebaseui-id-idp-button" v-on:click="ToggleLogin()">Login</button><br>
+      <button class="Signup firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-password firebaseui-id-idp-button" v-on:click="googleLogin()">Login with Google</button><br>
+      <button class="Signup firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-password firebaseui-id-idp-button" v-on:click="ToggleRegister()">Sign up</button>
     </div>
   </div>
   
@@ -77,7 +78,58 @@
             </form>
           </div>
   </div>
+  <div v-if="login">
+          <div class="card-header" style="display:flex; justify-content: space-between; padding: 2.5px; background-color:#33443c; color: white;">
+            <p style="margin-top: auto; margin-left:1vw; font-weight:600;">Registrieren</p>
+            <p class="closeModal h2 mb-2" v-on:click="hide()"><b-icon icon="x-square-fill"></b-icon></p>
+          </div>
+          
+          <div class="card-body">
+            <div v-if="error" class="alert alert-danger">{{error}}</div>
+            <form action="#" @submit.prevent="submit">
+
+              <div class="form-group row">
+                <label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
+
+                <div class="col-md-6">
+                  <input
+                    id="email"
+                    type="email"
+                    class="form-control"
+                    name="email"
+                    value
+                    required
+                    autofocus
+                    v-model="form.email"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
+
+                <div class="col-md-6">
+                  <input
+                    id="password"
+                    type="password"
+                    class="form-control"
+                    name="password"
+                    required
+                    v-model="form.password"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group row mb-0">
+                <div class="col-md-8 offset-md-4">
+                  <button type="submit" class="btn btn-primary">Register</button>
+                </div>
+              </div>
+            </form>
+          </div>
   </div>
+
+</div>
 
   
 </template>
@@ -85,7 +137,9 @@
 
 <script>
 import firebase from "firebase";
+import firebaseui from 'firebaseui';
 import Modal from '../../modalPlugin.js'
+import "firebaseui/dist/firebaseui.css";
 
 export default {
   data() {
@@ -97,8 +151,10 @@ export default {
       },
       visible:false,
       error: null,
-      login: true,
+      login: false,
       register:false,
+      loginMethods: true,
+      ui:null
     };
   },
   beforeMount() {
@@ -109,24 +165,29 @@ export default {
     })
   },
   mounted() {
-        let ui = firebaseui.auth.AuthUI.getInstance();
-        if (!ui) {
-            ui = new firebaseui.auth.AuthUI(firebase.auth());
-        }
-        var uiConfig = {
-            signInSuccessUrl: "/",
-            signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID,
-                firebase.auth.EmailAuthProvider.PROVIDER_ID]
-        };
-        ui.start("#firebaseui-auth-container", uiConfig);
+    
   },
   methods: {
     ToggleRegister(){
       this.login=false;
       this.register=true;
     },
+    ToggleLogin(){
+      this.loginMethods=false;
+      this.register=false;
+      this.login=true;
+    },
+    googleLogin(){
+      const provider = new firebase.auth.GoogleAuthProvider();
+      firebase.auth().signInWithPopup(provider).then((result)=>{
+        this.hide();
+      }).catch((err)=>{
+        alert("Something went wrong");
+      });
+    },
     submit() {
-      firebase
+      if(this.register){
+        firebase
         .auth()
         .createUserWithEmailAndPassword(this.form.email, this.form.password)
         .then(data => {
@@ -136,17 +197,23 @@ export default {
             })
             .then(() => {
               this.register=false;
+              this.login=false;
               this.visible=false;
             });
         })
         .catch(err => {
           this.error = err.message;
         });
+      }else if(this.login){
+        firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password).then((user)=>{
+          console.log(user);
+          this.hide();
+        });
+      }
     },
     show(params) {
       // making modal visible
       this.visible = true;
-      // setting title and text
     },
     hide() {
       // method for closing modal
