@@ -18,7 +18,7 @@
           <a class="nav-link" href="#">Account</a>
         </li>
         <li class="nav-item">
-          <router-link :to="{path: '/register'}" class="nav-link">Register</router-link>
+          <button @click="modalToggle()">Register</button>
         </li>
       </ul>
     </div>
@@ -27,10 +27,11 @@
 
 <script>
 export default {
-  methods:{
-    showModal(){
+
+  methods: {
+    modalToggle(){
       this.$modal.show();
-    }
+    }  
   }
 }
 </script>
