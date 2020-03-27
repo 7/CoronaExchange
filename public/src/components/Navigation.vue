@@ -18,7 +18,7 @@
           <a class="nav-link" href="#">Account</a>
         </li>
         <li class="nav-item">
-          <button @click="modalToggle()">Register</button>
+          <a class="nav-link" href="#" @click="modalToggle()">Register</a>
         </li>
       </ul>
     </div>
