@@ -1,0 +1,14 @@
+:root{
+    --primaryColor: #33443c;
+    --secondaryColor: #638474;
+    --primaryLight: #668659;
+    --accentDark: #deaa87;
+    --accentMiddle: #ffccaa;
+    --accentLight: #ffe6d5;
+
+    --alertDark: #c20000;
+    --alertBright: #e20000;
+
+    --greenGray: #b7bfbb;
+
+}

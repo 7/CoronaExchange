@@ -15,10 +15,10 @@
           <router-link :to="{path: '/Chat'}" class="nav-link">Chats</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Account</a>
+          <router-link :to="{path: '/Account'}" class="nav-link">Account</router-link>
         </li>
         <li class="nav-item">
-          <button @click="modalToggle()">Register</button>
+          <a class="nav-link" href="#" @click="modalToggle()">Login</a>
         </li>
       </ul>
     </div>
