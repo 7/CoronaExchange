@@ -43,6 +43,7 @@ import ItemList from "./ItemList"
 import { computeDestinationPoint } from "geolib"
 import $ from "jquery"
 import MapView from "./MapView";
+import axios from 'axios';
 
 export default {
   name: 'LandingPage',
@@ -160,9 +161,10 @@ export default {
     fetchItemList: function(perimeter_rectangle) {
       console.log("Fetch item list...");
       var vm = this;
+      
       // var url = `/api/search?topLeftLocation=${perimeter_rectangle.topLeftLocation.latitude},${perimeter_rectangle.topLeftLocation.longitude}&lowerRightLocation=${perimeter_rectangle.bottomRightLocation.latitude},${perimeter_rectangle.bottomRightLocation.longitude}`;
-      var url = "/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
-      $.getJSON(url).done(function(data) {
+      var serverURL = "http://localhost:5000/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
+      $.getJSON(serverURL).done(function(data) {
         console.log("Fetched item data");
         console.log(data);
         vm.items = data;

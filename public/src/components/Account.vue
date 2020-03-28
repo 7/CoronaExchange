@@ -44,6 +44,24 @@
         </md-dialog-actions>
       </md-dialog>
 
+      <md-dialog :md-active.sync="newOffering" id="newOffering" class="dialog">
+        <p class="error pink-text center-align"></p>
+        <md-dialog-title>Neues Tauschangebot anlegen</md-dialog-title>
+            <md-field>
+                <label>Was bietest du an?</label>
+                <md-input v-model="newTrade.offer"></md-input>
+            </md-field>
+            <md-field>
+                <label>Was möchtest du dafür haben? (Kann auch leer gelassen werden)</label>
+                <md-input v-model="newTrade.tradeFor"></md-input>
+            </md-field>
+        
+        <md-dialog-actions>
+            <md-button class="md-primary" @click="newOffering = false">Abbrechen</md-button>
+            <md-button class="md-primary" @click="addOffering()">Speichern</md-button>
+        </md-dialog-actions>
+      </md-dialog>
+
 
         <h1 style="display:inline;">Account</h1><div style="float:right;"><md-button class="md-accent" @click="deleteAccount=true;">Profil löschen</md-button></div>
         <hr/>
@@ -58,7 +76,7 @@
         </table>
         <div style="height:2.5vh;"/>
         <hr>
-        <h4>Deine Angebote/Suchanfragen:</h4>
+        <h1 style="display:inline;">Account</h1><div style="float:right;"><md-button class="md-icon-button md-raised" @click="newOffering=true;"><md-icon></md-icon>add</md-button></div>
         <hr>
 
         
@@ -67,6 +85,7 @@
 
 <script>
 import firebase from 'firebase'
+import Axios from 'axios'
 export default {
 
     data(){
@@ -79,7 +98,18 @@ export default {
             changeProfile:false,
             changePasswd:false,
             newPasswd:null,
-            newPasswdConf:null
+            newPasswdConf:null,
+            offerings:[],
+            newTrade:{
+                userId:null,
+                offer:null,
+                location:{
+                    lng: null,
+                    lat:null
+                },
+                tradeFor:null
+            },
+            newOffering:false
         }
     },
     mounted(){
@@ -138,6 +168,16 @@ export default {
             }else{
                 changePasswd.querySelector('.error').innerHTML= "New passwords don't match";
             }
+        },
+        addOffering(){
+            console.log(this.user);
+            this.newTrade.userId = this.user.uid;
+            console.log(this.newTrade);
+            let vm=this;
+            Axios.post("http://localhost:5000/api/offerings/123456", this.newTrade).then((res) =>{
+                console.log("success");
+                vm.newOffering=false;
+      }).catch(error=>console.log(error));
         }
     }
 }

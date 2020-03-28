@@ -8,10 +8,15 @@ import 'leaflet/dist/leaflet.css';
 
 import VueGlobalVariable from 'vue-global-var'
 import Modal from 'vue-js-modal'
-import * as firebaseui from 'firebaseui'
 import "firebaseui/dist/firebaseui.css";
 import ModalPlugin from './modalPlugin.js'
 import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import axios from 'axios'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css'
+import VueMaterial from 'vue-material'
+
+Vue.use(VueMaterial);
 
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
@@ -27,9 +32,9 @@ Vue.use(VueRouter)
 
 /* Import Components for Router */
 import RegisterComponent from './components/Authentication/Register.vue'
-import LoginComponent from './components/Authentication/Login.vue'
 import LandingComponent from './components/LandingPage.vue'
 import ChatComponent from './components/Chat.vue'
+import AccountComponent from './components/Account.vue'
 
 Vue.config.productionTip = false
 
@@ -56,9 +61,9 @@ Icon.Default.mergeOptions({
 const router = new VueRouter({
   routes: [
     { path: '/', component: LandingComponent},
-  { path: '/login', component: LoginComponent },
   { path: '/register', component: RegisterComponent },
-  {path: '/Chat', component: ChatComponent}
+  {path: '/Chat', component: ChatComponent},
+  {path:'/Account', component: AccountComponent}
 
   ]
   })
