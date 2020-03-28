@@ -98,12 +98,14 @@ function newMessage(req, res) {
 }
 function saveOffering(req,res){
   let id=uuid();
-  fireData.ref('/trades').child(req.body.userId).set({
+  let newItem={
     userId:req.body.userId,
     offer:req.body.offer,
     tradeFor:req.body.tradeFor,
     location:req.body.location
-  });
+  }
+  fireData.ref('/trades').child(req.body.userId).set(newItem);
+  jsonResponse(res, newItem);
   
 }
 
@@ -114,5 +116,5 @@ express()
   .get('/api/search', searchItems)
   .get('/api/chat/:participantId', auth.checkIfAuthenticated, chatMessages)
   .post('/api/chat/:participantId', auth.checkIfAuthenticated, newMessage)
-  .post('/api/offerings/:participantId', saveOffering)
+  .post('/api/offerings/:participantId',/* auth.checkIfAuthenticated, */ saveOffering)
   .listen(PORT, () => console.log(`Listening on ${PORT}`));

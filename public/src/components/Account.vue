@@ -76,9 +76,11 @@
         </table>
         <div style="height:2.5vh;"/>
         <hr>
-        <h1 style="display:inline;">Account</h1><div style="float:right;"><md-button class="md-icon-button md-raised" @click="newOffering=true;"><md-icon></md-icon>add</md-button></div>
+        <h1 style="display:inline;">Deine Tauschangebote:</h1><div style="float:right;"><md-button class="md-icon-button md-raised" @click="newOffering=true;"><md-icon></md-icon>add</md-button></div>
         <hr>
-
+        <div v-for="offer in offerings" :key="offer">
+            <p> Du tauschst {{offer.offer}} für {{offer.tradeFor}}</p>
+        </div>
         
     </div>
 </template>
@@ -170,13 +172,14 @@ export default {
             }
         },
         addOffering(){
-            console.log(this.user);
             this.newTrade.userId = this.user.uid;
-            console.log(this.newTrade);
             let vm=this;
-            Axios.post("http://localhost:5000/api/offerings/123456", this.newTrade).then((res) =>{
-                console.log("success");
+            Axios.post("http://localhost:5000/api/offerings/"+this.newTrade.userId, this.newTrade).then(function(res){
+                console.log(res);
                 vm.newOffering=false;
+                vm.newTrade.offer=null;
+                vm.newTrade.tradeFor=null;
+                vm.offerings.push(res.data);
       }).catch(error=>console.log(error));
         }
     }
