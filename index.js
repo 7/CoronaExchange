@@ -96,15 +96,28 @@ function newMessage(req, res) {
   db.availableMessages.push(message)  
   res.sendStatus(200);
 }
+async function getTrades(req, res){
+  let tradeItems;
+  participant = req.params.participantId;
+  tradeItems=await fireData.ref('/trades').child(participant).once('value');
+  let returnItems=[];
+  tradeItems.forEach(function(childSnapshot){
+    returnItems.push(childSnapshot.val());
+  });
+  return jsonResponse(res, returnItems);
+  
+}
 function saveOffering(req,res){
   let id=uuid();
   let newItem={
+    tradeId:id,
     userId:req.body.userId,
     offer:req.body.offer,
     tradeFor:req.body.tradeFor,
-    location:req.body.location
+    location:req.body.location,
+    date: Date.now()
   }
-  fireData.ref('/trades').child(req.body.userId).set(newItem);
+  fireData.ref('/trades').child(newItem.userId).child(id).set(newItem);
   jsonResponse(res, newItem);
   
 }
@@ -117,4 +130,5 @@ express()
   .get('/api/chat/:participantId', auth.checkIfAuthenticated, chatMessages)
   .post('/api/chat/:participantId', auth.checkIfAuthenticated, newMessage)
   .post('/api/offerings/:participantId',/* auth.checkIfAuthenticated, */ saveOffering)
+  .get('/api/trades/:participantId', getTrades)
   .listen(PORT, () => console.log(`Listening on ${PORT}`));

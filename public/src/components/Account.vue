@@ -76,10 +76,19 @@
         </table>
         <div style="height:2.5vh;"/>
         <hr>
-        <h1 style="display:inline;">Deine Tauschangebote:</h1><div style="float:right;"><md-button class="md-icon-button md-raised" @click="newOffering=true;"><md-icon></md-icon>add</md-button></div>
+        <h1 style="display:inline;">Deine Tauschangebote:</h1><div style="float:right;"><md-button class="md-icon-button md-raised" @click="newOffering=true;"><md-icon>add</md-icon></md-button></div>
         <hr>
-        <div v-for="offer in offerings" :key="offer">
-            <p> Du tauschst {{offer.offer}} für {{offer.tradeFor}}</p>
+        <div v-for="offer in offerings" :key="offer.tradeId" class="card">
+            <p class="h2 mb-2" style="text-align:right;"><md-icon style="color: #c20000">delete</md-icon></p>
+            <table style="width:100%;">
+                <tr><td>Suche:</td><td>Biete:</td></tr>
+                <tr><th>{{offer.tradeFor}}</th><th>{{offer.offer}}</th></tr>
+            </table>
+            <br><br>
+            <table style="width:100%;">
+                <tr><td><p style="font-size:0.75rem; color:darkgray;"> Eingestellt am {{getFormattedDate(offer.date)}}</p></td><td></td></tr>
+            </table>
+            
         </div>
         
     </div>
@@ -103,13 +112,15 @@ export default {
             newPasswdConf:null,
             offerings:[],
             newTrade:{
+                tradeId:null,
                 userId:null,
                 offer:null,
                 location:{
                     lng: null,
                     lat:null
                 },
-                tradeFor:null
+                tradeFor:null,
+                date:null
             },
             newOffering:false
         }
@@ -120,13 +131,20 @@ export default {
             if(user){
                 vm.user=user;
                 vm.dataLoaded=true;
-                console.log(vm.user);
+                vm.getTrades();
             }else{
                 vm.$modal.show();
             }
         });
     },
     methods:{
+        getFormattedDate(date){
+            date=new Date(date);
+            let s=date.getDate()+".";
+            s+=date.getMonth()+1+".";
+            s+=date.getFullYear();
+            return s;
+        },
         onConfirm(){
             let vm=this;
             firebase.auth().currentUser.delete().then(function(){
@@ -179,8 +197,17 @@ export default {
                 vm.newOffering=false;
                 vm.newTrade.offer=null;
                 vm.newTrade.tradeFor=null;
+                console.log(res.data);
                 vm.offerings.push(res.data);
-      }).catch(error=>console.log(error));
+            }).catch(error=>console.log(error));
+        },
+        getTrades(){
+            let vm=this;
+            Axios.get("http://localhost:5000/api/trades/"+this.user.uid).then(function(res){
+               res.data.forEach(element => {
+                   vm.offerings.push(element);
+               });
+            }).catch((error)=>console.log(error));
         }
     }
 }
@@ -213,5 +240,12 @@ export default {
     padding: 0 2vw;
     height:50vh;
     max-height:500px;
+}
+.card{
+    width:50vw;
+    max-width: 250px;
+    display:inline-block;
+    margin:1vw;
+    padding:0 1vw;
 }
 </style>
