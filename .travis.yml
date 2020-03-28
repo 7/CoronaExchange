@@ -1,7 +1,9 @@
-
 language: node_js
 node_js:
-  - 13
+  - "7"
 script:
-  - npm test
-  - npm run unit-test
+ - echo "Deployment to Firebase hosting"
+install:
+  - npm install -g firebase-tools
+after_success:
+  - firebase deploy --project coronaexchange-44512 --token 1//03FIE4_4zL6yOCgYIARAAGAMSNwF-L9Ir6ikkV6T_ZUuX7s_096JPeuWaaUo7D7ZIq_tafjGa9Nzq5FG3FF-6_G6CCh83zxxxUHI
