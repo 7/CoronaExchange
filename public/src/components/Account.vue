@@ -79,7 +79,7 @@
         <h1 style="display:inline;">Deine Tauschangebote:</h1><div style="float:right;"><md-button class="md-icon-button md-raised" @click="newOffering=true;"><md-icon>add</md-icon></md-button></div>
         <hr>
         <div v-for="offer in offerings" :key="offer.tradeId" class="card">
-            <p class="h2 mb-2" style="text-align:right;"><md-icon style="color: #c20000">delete</md-icon></p>
+            <p class="h2 mb-2" style="text-align:right;" @click="deleteOffer(offer)"><md-icon style="color: #c20000">delete</md-icon></p>
             <table style="width:100%;">
                 <tr><td>Suche:</td><td>Biete:</td></tr>
                 <tr><th>{{offer.tradeFor}}</th><th>{{offer.offer}}</th></tr>
@@ -97,8 +97,9 @@
 <script>
 import firebase from 'firebase'
 import Axios from 'axios'
+import store from '../store.js'
 export default {
-
+    store,
     data(){
         return{
             user:null,
@@ -122,22 +123,44 @@ export default {
                 tradeFor:null,
                 date:null
             },
-            newOffering:false
+            newOffering:false,
+            location:{
+                lng:null,
+                lat:null
+            }
         }
     },
     mounted(){
         let vm=this;
+        var _ = require('lodash');
         firebase.auth().onAuthStateChanged(function(user) {
             if(user){
                 vm.user=user;
                 vm.dataLoaded=true;
+                
+                vm.$store.commit("SET_USER",_.cloneDeep(user))
+                Axios.post("http://localhost:5000/api/user", user);
                 vm.getTrades();
             }else{
                 vm.$modal.show();
             }
         });
+        
+        if(!("geolocation" in navigator)) {
+      console.log("Geolocation is not available");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(pos => {
+      this.location.lng=pos.coords.longitude;
+      this.location.lat=pos.coords.latitude;
+    }, err => {
+      console.log(err);
+    })
     },
     methods:{
+        saveToStore(user){
+            
+        },
         getFormattedDate(date){
             date=new Date(date);
             let s=date.getDate()+".";
@@ -191,6 +214,7 @@ export default {
         },
         addOffering(){
             this.newTrade.userId = this.user.uid;
+            if(this.location!=null) this.newTrade.location=this.location;
             let vm=this;
             Axios.post("http://localhost:5000/api/offerings/"+this.newTrade.userId, this.newTrade).then(function(res){
                 console.log(res);
@@ -205,6 +229,15 @@ export default {
             let vm=this;
             Axios.get("http://localhost:5000/api/trades/"+this.user.uid).then(function(res){
                res.data.forEach(element => {
+                   vm.offerings.push(element);
+               });
+            }).catch((error)=>console.log(error));
+        },
+        deleteOffer(offer){
+            let vm=this;
+            Axios.post("http://localhost:5000/api/deleteTrade/"+this.user.uid,offer).then(function(res){
+                vm.offerings=[];
+                res.data.forEach(element => {
                    vm.offerings.push(element);
                });
             }).catch((error)=>console.log(error));

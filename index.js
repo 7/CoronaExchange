@@ -36,7 +36,7 @@ var fireData = firebase.database();
 
 var db = new mockdb.mockDb(offeringsMockData, mockdb.availableMessages)
 
-function searchItems(req, res) {
+async function searchItems(req, res) {
   tlSplit = req.query.topLeftLocation ?
     req.query.topLeftLocation.split(",")
     : [];
@@ -67,15 +67,29 @@ function searchItems(req, res) {
     return
   }
 
-  items = db.itemsByLocation(topLeftLocation, lowerRightLocation);  
-  jsonResponse(res, items);
+  tradeItems=await fireData.ref('/trades').once('value');
+  let returnItems=[];
+  tradeItems.forEach(function(childSnapshot){
+    childSnapshot.forEach(function(child){
+      returnItems.push(child.val());
+    })
+  });
+  return jsonResponse(res, returnItems);
 }
 
-function chatMessages(req, res) {
-  me = req.authId;
+async function chatMessages(req, res) {
+  me=req.params.participantId;
+  conversationPartners=await fireData.ref('/conversations').child(me).once('value');
+
+  return jsonResponse(res, conversationPartners);
+  /* me = req.authId;
   participant = req.params.participantId;
   chatMessages = db.chatMessagesBetweenUsers(me, participant);
-  jsonResponse(res, chatMessages);
+  jsonResponse(res, chatMessages); */
+}
+
+function chatPartners(req,res){
+  me=req.params.participantId;
 }
 
 function jsonResponse(res, obj){
@@ -84,19 +98,21 @@ function jsonResponse(res, obj){
 }
 
 function newMessage(req, res) {
-  me = req.authId;
-  participant = req.params.participantId;
+  me = req.body.userId;
+  participant = req.body.participantId;
   message = {
     from: me,
     to: participant,
     date: new Date(),
-    message: req.body.message
+    message: req.body.message,
+    conversationId: me+"/"+participant
   };
+  fireData.ref('/messages').child(me+"+"+participant).push(message);
 
-  db.availableMessages.push(message)  
+  /* db.availableMessages.push(message)   */
   res.sendStatus(200);
 }
-async function getTrades(req, res){
+async function getUserspecificTrades(req, res){
   let tradeItems;
   participant = req.params.participantId;
   tradeItems=await fireData.ref('/trades').child(participant).once('value');
@@ -118,8 +134,44 @@ function saveOffering(req,res){
     date: Date.now()
   }
   fireData.ref('/trades').child(newItem.userId).child(id).set(newItem);
-  jsonResponse(res, newItem);
+  return jsonResponse(res, newItem);
   
+}
+function deleteOffer(req, res){
+  fireData.ref('/trades').child(req.body.userId).child(req.body.tradeId).remove();
+  return getUserspecificTrades(req, res);
+}
+function saveUser(req, res){
+  fireData.ref('/user').child(req.body.uid).set(req.body);
+  res.sendStatus(200);
+}
+async function getUser(uid){
+  let username=await fireData.ref('/user').child(uid).once('value');
+  username=username.val().displayName;
+  return username;
+}
+async function getConversations(req, res){
+  conversationPartners=await fireData.ref('/conversations').child(req.params.participantId).once('value');
+  let returnPartners=[]
+  conversationPartners.forEach(function(partner){
+    tmp=partner.val();
+    returnPartners.push(tmp);
+  });
+  for(let i=0; i<returnPartners.length;++i){
+    returnPartners[0].tradeWith=await getUser(returnPartners[0].tradeWith);
+  }
+  return jsonResponse(res, returnPartners);
+}
+function newConversation(req,res){
+  me = req.body.userId;
+  trade={
+    offer: req.body.offer,
+    tradeFor:req.body.tradeFor,
+    tradeWith: req.body.tradePartner,
+    tradeId:req.body.tradeId
+  }
+  fireData.ref('/conversations').child(me).child("tradeConversationId").set(trade);
+  res.sendStatus(200);
 }
 
 express()
@@ -127,8 +179,12 @@ express()
   .use(express.json())
   .use(cors())
   .get('/api/search', searchItems)
-  .get('/api/chat/:participantId', auth.checkIfAuthenticated, chatMessages)
-  .post('/api/chat/:participantId', auth.checkIfAuthenticated, newMessage)
+  .get('/api/chat/:participantId', /* auth.checkIfAuthenticated ,*/ chatMessages)
+  .post('/api/chat/:participantId', /* auth.checkIfAuthenticated ,*/ newMessage)
+  .get('/api/conversations/:participantId', getConversations)
+  .post('/api/conversations', newConversation)
   .post('/api/offerings/:participantId',/* auth.checkIfAuthenticated, */ saveOffering)
-  .get('/api/trades/:participantId', getTrades)
+  .get('/api/trades/:participantId', getUserspecificTrades)
+  .post('/api/deleteTrade/:participantId',deleteOffer)
+  .post('/api/user',saveUser)
   .listen(PORT, () => console.log(`Listening on ${PORT}`));
