@@ -9,19 +9,19 @@ const mockdb = require('./mockdb')
 
 const uuid = require('uuid/v4');
 
+require('dotenv').config();
 //Firebase Database initialization
 var admin = require("firebase-admin");
 var firebase=require('firebase');
 
 
 const firebaseConfig = {     
-  apiKey: "AIzaSyA8Cnt81CF00BWGof4H-jEr-n0GjDisfDQ",     
-  authDomain: "coronaexchange-44512.firebaseapp.com",     
-  databaseURL: "https://coronaexchange-44512.firebaseio.com/",     
-  projectId: "coronaexchange-44512",     
-  storageBucket: "coronaexchange-44512.appspot.com",     
-  messagingSenderId: "468202509714",     
-  appId: "1:468202509714:web:0605968eec17c13b1f9d4b"   };   // Initialize Firebase   firebase.initializeApp(firebaseConfig);
+  apiKey: process.env.API_KEY,     
+  authDomain: process.env.AUTH_DOMAIN,     
+  databaseURL: process.env.DATABASE_URL,     
+  projectId: process.env.PROJECT_URL,       
+  messagingSenderId: process.env.MESSAGING_SENDER_ID,     
+  appId: process.env.APP_ID   };   // Initialize Firebase   firebase.initializeApp(firebaseConfig);
 
   firebase.initializeApp(firebaseConfig);
 
@@ -187,4 +187,4 @@ express()
   .get('/api/trades/:participantId', getUserspecificTrades)
   .post('/api/deleteTrade/:participantId',deleteOffer)
   .post('/api/user',saveUser)
-  .listen(PORT, () => console.log(`Listening on ${PORT}`));
+  .listen(PORT, () => console.log("Listening on "+PORT));

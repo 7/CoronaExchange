@@ -17,6 +17,7 @@ import 'vue-material/dist/theme/default.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import VueMaterial from 'vue-material'
 import store from './store.js'
+require('dotenv').config();
 
 Vue.use(VueMaterial);
 
@@ -41,12 +42,12 @@ import AccountComponent from './components/Account.vue'
 Vue.config.productionTip = false
 
 const firebaseConfig = {     
-  apiKey: "AIzaSyA8Cnt81CF00BWGof4H-jEr-n0GjDisfDQ",     
-  authDomain: "coronaexchange-44512.firebaseapp.com",     
-  databaseURL: "https://coronaexchange-44512.firebaseio.com/",     
-  projectId: "coronaexchange-44512",        
-  messagingSenderId: "468202509714",     
-  appId: "1:468202509714:web:0605968eec17c13b1f9d4b"   };   // Initialize Firebase   firebase.initializeApp(firebaseConfig);
+  apiKey: process.env.VUE_APP_APIKEY,     
+  authDomain: process.env.VUE_APP_AUTH_DOMAIN,     
+  databaseURL: process.env.VUE_APP_DATABASE_URL,     
+  projectId: process.env.VUE_APP_PROJECT_ID,        
+  messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,     
+  appId: process.env.VUE_APP_APP_ID   };   // Initialize Firebase   firebase.initializeApp(firebaseConfig);
 
   firebase.initializeApp(firebaseConfig);
 
