@@ -38,6 +38,7 @@ import RegisterComponent from './components/Authentication/Register.vue'
 import LandingComponent from './components/LandingPage.vue'
 import ChatComponent from './components/Chat.vue'
 import AccountComponent from './components/Account.vue'
+import ChatOverviewComponent from './components/ChatOverview.vue'
 
 Vue.config.productionTip = false
 
@@ -64,12 +65,28 @@ const router = new VueRouter({
   routes: [
     { path: '/', component: LandingComponent},
   { path: '/register', component: RegisterComponent },
-  {path: '/Chat', component: ChatComponent},
-  {path:'/Account', component: AccountComponent}
+  {path: '/ChatOverview', component: ChatOverviewComponent, meta: {requiresAuth:true}},
+  {path:'/Account', component: AccountComponent, meta: {requiresAuth:true}},
+  {path: '/Chat', component: ChatComponent, meta: {requiresAuth:true}}
 
   ]
   })
-
+  router.beforeEach((to, from, next) => {
+    if ( to.matched.some(record => record.meta.requiresAuth)) {
+      let vm= this;
+      
+      firebase.auth().onAuthStateChanged(function(user) {
+        console.log(user);
+        if(user){
+            next();
+        }else{
+            vm.$modal.show();
+        }
+    });
+    } else {
+        next();
+    }
+});
 new Vue({
   router,
   store,

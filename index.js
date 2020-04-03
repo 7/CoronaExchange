@@ -78,40 +78,54 @@ async function searchItems(req, res) {
 }
 
 async function chatMessages(req, res) {
-  me=req.params.participantId;
-  conversationPartners=await fireData.ref('/conversations').child(me).once('value');
-
-  return jsonResponse(res, conversationPartners);
+  let messages=(await fireData.ref('/messages').child(req.params.conversationId).once('value'));
+  let returnMessages=[];
+  messages.forEach(function(partner){
+    tmp=partner.val();
+    returnMessages.push(tmp);
+  });
+  for(let i=0; i<returnMessages.length;++i){
+    returnMessages[i].traderName=await getUser(returnMessages[i].from);
+  }
+  return jsonResponse(res, returnMessages);
   /* me = req.authId;
   participant = req.params.participantId;
   chatMessages = db.chatMessagesBetweenUsers(me, participant);
   jsonResponse(res, chatMessages); */
 }
-
-function chatPartners(req,res){
-  me=req.params.participantId;
+String.prototype.hashCode = function() {
+  var hash = 0;
+  if (this.length == 0) {
+      return hash;
+  }
+  for (var i = 0; i < this.length; i++) {
+      var char = this.charCodeAt(i);
+      hash = ((hash<<5)-hash)+char;
+      hash = hash & hash; // Convert to 32bit integer
+  }
+  return hash;
 }
-
 function jsonResponse(res, obj){
   res.setHeader('Content-Type', 'application/json; charset=utf-8');  
   res.end(JSON.stringify(obj));
 }
 
 function newMessage(req, res) {
-  me = req.body.userId;
-  participant = req.body.participantId;
+  me = req.body.from;
+  participant = req.body.to;
   message = {
     from: me,
     to: participant,
-    date: new Date(),
+    date: req.body.dateSent,
     message: req.body.message,
-    conversationId: me+"/"+participant
+    convId: req.body.convId
   };
-  fireData.ref('/messages').child(me+"+"+participant).push(message);
+  fireData.ref('/messages').child(req.body.convId).push(message);
 
   /* db.availableMessages.push(message)   */
   res.sendStatus(200);
 }
+
 async function getUserspecificTrades(req, res){
   let tradeItems;
   participant = req.params.participantId;
@@ -158,19 +172,25 @@ async function getConversations(req, res){
     returnPartners.push(tmp);
   });
   for(let i=0; i<returnPartners.length;++i){
-    returnPartners[0].tradeWith=await getUser(returnPartners[0].tradeWith);
+    returnPartners[i].traderName=await getUser(returnPartners[i].tradeWith);
   }
   return jsonResponse(res, returnPartners);
 }
 function newConversation(req,res){
   me = req.body.userId;
+  participant = req.body.tradePartner;
+  convId = req.body.convId;
   trade={
     offer: req.body.offer,
     tradeFor:req.body.tradeFor,
     tradeWith: req.body.tradePartner,
-    tradeId:req.body.tradeId
+    tradeId:req.body.tradeId,
+    convId:convId,
+    lastMessage: Date.now()
   }
-  fireData.ref('/conversations').child(me).child("tradeConversationId").set(trade);
+  fireData.ref('/conversations').child(me).child(convId).set(trade);
+  trade.tradeWith=participant;
+  fireData.ref('/conversations').child(participant).child(convId).set(trade);
   res.sendStatus(200);
 }
 
@@ -179,8 +199,8 @@ express()
   .use(express.json())
   .use(cors())
   .get('/api/search', searchItems)
-  .get('/api/chat/:participantId', /* auth.checkIfAuthenticated ,*/ chatMessages)
-  .post('/api/chat/:participantId', /* auth.checkIfAuthenticated ,*/ newMessage)
+  .get('/api/chat/:conversationId', /* auth.checkIfAuthenticated ,*/ chatMessages)
+  .post('/api/chat', /* auth.checkIfAuthenticated ,*/ newMessage)
   .get('/api/conversations/:participantId', getConversations)
   .post('/api/conversations', newConversation)
   .post('/api/offerings/:participantId',/* auth.checkIfAuthenticated, */ saveOffering)

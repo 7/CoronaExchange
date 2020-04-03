@@ -12,7 +12,7 @@
           <router-link :to="{path: '/'}" class="nav-link">Produkte finden</router-link>
         </li>
         <li class="nav-item">
-          <router-link :to="{path: '/Chat'}" class="nav-link">Chats</router-link>
+          <router-link :to="{path: '/ChatOverview'}" class="nav-link">Chats</router-link>
         </li>
         <li class="nav-item">
           <router-link :to="{path: '/Account'}" class="nav-link">Account</router-link>
