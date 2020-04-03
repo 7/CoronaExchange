@@ -177,19 +177,19 @@ async function getConversations(req, res){
   return jsonResponse(res, returnPartners);
 }
 function newConversation(req,res){
-  me = req.body.userId;
-  participant = req.body.tradePartner;
+  me = req.body.me;
+  participant = req.body.tradeWith;
   convId = req.body.convId;
-  trade={
+  let trade={
     offer: req.body.offer,
     tradeFor:req.body.tradeFor,
-    tradeWith: req.body.tradePartner,
+    tradeWith: req.body.tradeWith,
     tradeId:req.body.tradeId,
     convId:convId,
     lastMessage: Date.now()
   }
   fireData.ref('/conversations').child(me).child(convId).set(trade);
-  trade.tradeWith=participant;
+  trade.tradeWith=me;
   fireData.ref('/conversations').child(participant).child(convId).set(trade);
   res.sendStatus(200);
 }

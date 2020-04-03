@@ -18,7 +18,7 @@
               <td>{{ item.tradeFor }}</td>
               <!-- <td>15 Km</td> -->
               <td>
-                <button type="button" class="btn btn-warning" v-on:click="contactUser(item)">Kontaktieren</button>
+                <button type="button" class="btn btn-warning" v-on:click="$emit('contactUser', item)">Kontaktieren</button>
               </td>
             </tr>
         </tbody>
@@ -31,12 +31,7 @@
 
 export default {
   name: "ItemList",
-  props: ["items"],
-  methods:{
-    contactUser(item){
-      console.log(item);
-    }
-  }
+  props: ["items"]
 }
 
 </script>
