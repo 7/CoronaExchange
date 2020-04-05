@@ -13,7 +13,7 @@
       <ItemList v-bind:items="filteredItems" v-on:contactUser="contactUser" />
     </div>
 
-    <div v-bind:id="contactUserId" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -145,18 +145,25 @@ console.log(this.selectedUser);
               dateSent:Date.now()
             }
             console.log(msg);
-            axios.post("http://localhost:5000/api/chat", msg).then((response)=>{}).catch((error)=>console.log(error));
+            axios.post("http://localhost:5000/api/chat", msg).then((response)=>{
+              console.log(response);
+              $(".modal").modal('toggle');}).catch((error)=>console.log(error));
             
             });
             }
         }); 
     },
     contactUser: function(user) {
+      if(user.userId == this.$store.state.user.uid) {
+        alert("Du kannst dich nicht selbst kontaktieren!");
+      }else{
       this.selectedUser = user;
       this.message="Hallo, ich würde gerne "+ this.selectedUser.tradeFor+" gegen "+ this.selectedUser.offer+" tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?";
       $(".modal").modal();
       $("#modal-text").focus();
       console.log("Set user id to " + user._id);
+      }
+      
     },
     sendMessage: function() {
       if (!this.contactUser) {

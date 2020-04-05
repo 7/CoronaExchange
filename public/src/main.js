@@ -52,6 +52,10 @@ const firebaseConfig = {
 
   firebase.initializeApp(firebaseConfig);
 
+import Notifications from 'vue-notification'
+
+Vue.use(Notifications);
+
 import { Icon } from 'leaflet';
 
 delete Icon.Default.prototype._getIconUrl;
@@ -74,10 +78,24 @@ const router = new VueRouter({
   router.beforeEach((to, from, next) => {
     if ( to.matched.some(record => record.meta.requiresAuth)) {
       let vm= this;
-      
+      var _ = require('lodash');
       firebase.auth().onAuthStateChanged(function(user) {
-        console.log(user);
         if(user){
+          store.commit("SET_USER",_.cloneDeep(user))
+          axios.post("http://localhost:5000/api/user", user);
+          
+          if(store.state.conversations == null){
+            let chats=[]
+            console.log(user.uid);
+            axios.get("http://localhost:5000/api/conversations/"+user.uid).then(function(res){
+              console.log("roooute");
+          console.log(res);
+               res.data.forEach(element => {
+                   chats.push(element);
+               });
+               store.commit("SET_CONVERSATIONS",chats);
+            }).catch((error)=>console.log(error));
+          }
             next();
         }else{
             vm.$modal.show();

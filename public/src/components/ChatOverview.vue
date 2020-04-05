@@ -31,9 +31,14 @@ export default {
       return{
           me:null,
           participant:null,
-          chats:[],
-          chatsLoaded:false
+          chatsLoaded:true
       }
+  },
+  computed:{
+    chats(){
+      console.log(this.$store.state.conversations);
+        return this.$store.state.conversations;
+    }
   },
   methods:{
     hashCode(string) {
@@ -49,9 +54,9 @@ export default {
         return hash;
         },
       viewChat(id){
-          this.$store.state.me=this.me;
           this.$store.commit("SET_PARTICIPANT", id);
-          this.$router.push({path:'/Chat', query:{convId:Math.abs(this.hashCode(this.me)+this.hashCode(id))}});
+          console.log(this.$store.state.user);
+          this.$router.push({path:'/Chat', query:{convId:Math.abs(this.hashCode(this.$store.state.user.uid)+this.hashCode(id))}});
       },
       getFormattedDate(date){
             date=new Date(date);
@@ -60,7 +65,7 @@ export default {
             s+=date.getFullYear();
             return s;
         },
-      getChats(){
+      /* getChats(){
           let vm=this;
           axios.get("http://localhost:5000/api/conversations/"+this.me).then(function(res){
                res.data.forEach(element => {
@@ -69,29 +74,17 @@ export default {
                });
                vm.chatsLoaded=true;
             }).catch((error)=>console.log(error));
-      }
+      } */
   },
   
   mounted(){
       var _ = require('lodash');
       let vm=this;
-      firebase.auth().onAuthStateChanged(function(user) {
-            if(user){
-                vm.$store.commit("SET_USER",_.cloneDeep(user))
-                axios.post("http://localhost:5000/api/user", user);
-                vm.me=user.uid;
-                console.log(vm.me);
-                vm.getChats();
-            }else{
-                vm.$modal.show();
-            }
-        });
-    
   }
 }
 </script>
 
-<style>
+<style scoped>
 .md-toolbar{
     display:flex !important;
     padding: 10px 16px !important;

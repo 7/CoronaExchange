@@ -8,7 +8,6 @@ const offeringsMockData = require('./offerings-berlin.json')
 const mockdb = require('./mockdb')
 
 const uuid = require('uuid/v4');
-
 require('dotenv').config();
 //Firebase Database initialization
 var admin = require("firebase-admin");
@@ -121,7 +120,8 @@ function newMessage(req, res) {
     convId: req.body.convId
   };
   fireData.ref('/messages').child(req.body.convId).push(message);
-
+  fireData.ref('/conversations').child(me).child(req.body.convId).update({lastMessage:Date.now()});
+  fireData.ref('/conversations').child(participant).child(req.body.convId).update({lastMessage:Date.now()});
   /* db.availableMessages.push(message)   */
   res.sendStatus(200);
 }
@@ -164,6 +164,22 @@ async function getUser(uid){
   username=username.val().displayName;
   return username;
 }
+async function getNotification(req, res){
+  let messages=(await fireData.ref('/messages').child(req.body.convId).once('value'));
+  let returnMessages=[];
+  messages.forEach(function(partner){
+    tmp=partner.val();
+    returnMessages.push(tmp);
+  });
+  if(returnMessages[returnMessages.length - 1].from != req.body.me){
+    let username=await fireData.ref('/user').child(req.body.participantId).once('value');
+    username=username.val().displayName;
+    return jsonResponse(res, username);
+  }else{
+    return jsonResponse(res, false);
+  }
+  
+}
 async function getConversations(req, res){
   conversationPartners=await fireData.ref('/conversations').child(req.params.participantId).once('value');
   let returnPartners=[]
@@ -172,6 +188,7 @@ async function getConversations(req, res){
     returnPartners.push(tmp);
   });
   for(let i=0; i<returnPartners.length;++i){
+    console.log(returnPartners[i].tradeWith);
     returnPartners[i].traderName=await getUser(returnPartners[i].tradeWith);
   }
   return jsonResponse(res, returnPartners);
@@ -207,4 +224,5 @@ express()
   .get('/api/trades/:participantId', getUserspecificTrades)
   .post('/api/deleteTrade/:participantId',deleteOffer)
   .post('/api/user',saveUser)
+  .post('/api/notification/', getNotification)
   .listen(PORT, () => console.log("Listening on "+PORT));
