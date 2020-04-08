@@ -83,12 +83,12 @@ const router = new VueRouter({
       firebase.auth().onAuthStateChanged(function(user) {
         if(user){
           store.commit("SET_USER",_.cloneDeep(user))
-          axios.post("http://localhost:5000/api/user", user);
+          axios.post("/api/user", user);
           
           if(store.state.conversations == null){
             let chats=[]
             console.log(user.uid);
-            axios.get("http://localhost:5000/api/conversations/"+user.uid).then(function(res){
+            axios.get("/api/conversations/"+user.uid).then(function(res){
               console.log("roooute");
           console.log(res);
                res.data.forEach(element => {
@@ -104,7 +104,7 @@ const router = new VueRouter({
     });
     } if ( to.matched.some(record => record.meta.requiresConversations)) {
       let chats=[]
-      axios.get("http://localhost:5000/api/conversations/"+store.state.user.uid).then(function(res){
+      axios.get("/api/conversations/"+store.state.user.uid).then(function(res){
          res.data.forEach(element => {
              chats.push(element);
          });
