@@ -69,7 +69,7 @@ const router = new VueRouter({
   routes: [
     { path: '/', component: LandingComponent},
   { path: '/register', component: RegisterComponent },
-  {path: '/ChatOverview', component: ChatOverviewComponent, meta: {requiresAuth:true}},
+  {path: '/ChatOverview', component: ChatOverviewComponent, meta: {requiresAuth:true, requiresConversations:true}},
   {path:'/Account', component: AccountComponent, meta: {requiresAuth:true}},
   {path: '/Chat', component: ChatComponent, meta: {requiresAuth:true}}
 
@@ -77,6 +77,7 @@ const router = new VueRouter({
   })
   router.beforeEach((to, from, next) => {
     if ( to.matched.some(record => record.meta.requiresAuth)) {
+      console.log("matched route");
       let vm= this;
       var _ = require('lodash');
       firebase.auth().onAuthStateChanged(function(user) {
@@ -101,7 +102,15 @@ const router = new VueRouter({
             vm.$modal.show();
         }
     });
-    } else {
+    } if ( to.matched.some(record => record.meta.requiresConversations)) {
+      let chats=[]
+      axios.get("http://localhost:5000/api/conversations/"+store.state.user.uid).then(function(res){
+         res.data.forEach(element => {
+             chats.push(element);
+         });
+         store.commit("SET_CONVERSATIONS",chats);
+      }).catch((error)=>console.log(error));
+    }else {
         next();
     }
 });

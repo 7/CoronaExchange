@@ -31,12 +31,11 @@ export default {
       return{
           me:null,
           participant:null,
-          chatsLoaded:true
+          chatsLoaded:false
       }
   },
   computed:{
     chats(){
-      console.log(this.$store.state.conversations);
         return this.$store.state.conversations;
     }
   },
@@ -78,8 +77,7 @@ export default {
   },
   
   mounted(){
-      var _ = require('lodash');
-      let vm=this;
+      this.chatsLoaded=true;
   }
 }
 </script>

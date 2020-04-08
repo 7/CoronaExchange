@@ -29,7 +29,7 @@
       <div class="msg-bubble">
         <div class="msg-info">
           <div class="msg-info-name">{{message.traderName}}</div>
-          <div class="msg-info-time">{{message.sentDate}}</div>
+          <div class="msg-info-time">{{getFormattedTime(message.date)}}</div>
         </div>
 
         <div class="msg-text">
@@ -64,8 +64,9 @@ export default {
   methods:{
       getFormattedTime(date){
         date = new Date(date);
-        let time = date.getHours();
-        time +=":"+date.getMinutes();
+        let time = ('0'+date.getHours()).slice(-2)+ ':'+('0'+date.getMinutes()).slice(-2);
+        /* let time = date.getHours();
+        time +=":"+date.getMinutes(); */
         return time;
       },
       getFormattedDate(date){

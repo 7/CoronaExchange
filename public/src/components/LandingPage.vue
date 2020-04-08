@@ -12,7 +12,6 @@
     <div class="container">
       <ItemList v-bind:items="filteredItems" v-on:contactUser="contactUser" />
     </div>
-
     <div class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
@@ -217,8 +216,8 @@ console.log(this.selectedUser);
       var vm = this;
       
       // var url = `/api/search?topLeftLocation=${perimeter_rectangle.topLeftLocation.latitude},${perimeter_rectangle.topLeftLocation.longitude}&lowerRightLocation=${perimeter_rectangle.bottomRightLocation.latitude},${perimeter_rectangle.bottomRightLocation.longitude}`;
-      var serverURL = "http://localhost:5000/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
-      $.getJSON(serverURL).done(function(data) {
+      var url = "http://localhost:5000/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
+      $.getJSON(url).done(function(data) {
         console.log("Fetched item data");
         console.log(data);
         vm.items = data;
