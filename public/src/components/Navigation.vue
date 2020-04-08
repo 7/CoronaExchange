@@ -12,13 +12,13 @@
           <router-link :to="{path: '/'}" class="nav-link">Produkte finden</router-link>
         </li>
         <li class="nav-item">
-          <router-link :to="{path: '/Chat'}" class="nav-link">Chats</router-link>
+          <router-link :to="{path: '/ChatOverview'}" class="nav-link">Chats</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Account</a>
+          <router-link :to="{path: '/Account'}" class="nav-link">Account</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" @click="modalToggle()">Register</a>
+          <a class="nav-link" href="#" @click="modalToggle()">Login</a>
         </li>
       </ul>
     </div>

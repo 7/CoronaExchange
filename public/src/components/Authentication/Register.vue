@@ -6,8 +6,8 @@
     <p class="closeModal h2 mb-2" v-on:click="hide()"><b-icon icon="x-square-fill"></b-icon></p>
 
     <div class="firebaseui-card-content" style="text-align-last:center;">
-      <button class="Signup firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-password firebaseui-id-idp-button" v-on:click="ToggleLogin()">Login</button><br>
-      <button class="Signup firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-password firebaseui-id-idp-button" v-on:click="googleLogin()">Login with Google</button><br>
+      <button style="margin-top:0" class="Signup firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-password firebaseui-id-idp-button" v-on:click="ToggleLogin()">Login</button><br>
+      <button class="Signup firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-password firebaseui-id-idp-button" v-on:click="googleLogin()">Login with Google</button><br><br><br>
       <button class="Signup firebaseui-idp-button mdl-button mdl-js-button mdl-button--raised firebaseui-idp-password firebaseui-id-idp-button" v-on:click="ToggleRegister()">Sign up</button>
     </div>
   </div>
@@ -170,6 +170,7 @@ export default {
   methods: {
     ToggleRegister(){
       this.login=false;
+      this.loginMethods=false;
       this.register=true;
     },
     ToggleLogin(){
@@ -214,10 +215,14 @@ export default {
     show(params) {
       // making modal visible
       this.visible = true;
+      this.loginMethods=true;
     },
     hide() {
       // method for closing modal
       this.visible = false;
+      this.loginMethods=false;
+      this.login=false;
+      this.register=false;
     },
     confirm() {
       // confirm code will be here soon(TM)

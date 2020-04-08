@@ -12,8 +12,7 @@
     <div class="container">
       <ItemList v-bind:items="filteredItems" v-on:contactUser="contactUser" />
     </div>
-
-    <div v-bind:id="contactUserId" class="modal fade" tabindex="-1" role="dialog">
+    <div class="modal fade" tabindex="-1" role="dialog">
       <div class="modal-dialog modal-dialog-scrollable" role="document">
         <div class="modal-content">
           <div class="modal-header">
@@ -23,11 +22,11 @@
             </button>
           </div>
           <div class="modal-body">
-            <textarea name="" id="modal-text" class="form-control" rows="4">Hallo, ich würde gerne {{ selectedUser.tradeFor }} gegen {{ selectedUser.offer }} tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?</textarea>
+            <textarea name="" id="modal-text" class="form-control" rows="4" v-model="message"></textarea>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Abbrechen</button>
-            <button type="button" class="btn btn-primary" style="background-color: #668659;">Nachricht senden</button>
+            <button type="button" class="btn btn-primary" style="background-color: #668659;" @click="newConversation()">Nachricht senden</button>
           </div>
         </div>
       </div>
@@ -43,9 +42,13 @@ import ItemList from "./ItemList"
 import { computeDestinationPoint } from "geolib"
 import $ from "jquery"
 import MapView from "./MapView";
+import axios from 'axios';
+import firebase from 'firebase';
+import store from'../store.js';
 
 export default {
   name: 'LandingPage',
+  store,
   components: {
     Navigation,
     ItemSearch,
@@ -62,7 +65,8 @@ export default {
       perimeter_rectangle: null,
       filter_offer_by: "",
       filter_search_by: "",
-      items: []
+      items: [],
+      message:""
     }
   },
   computed: {
@@ -103,13 +107,63 @@ export default {
     }
   },
   methods: {
+    hashCode(string) {
+        var hash = 0;
+        if (string.length == 0) {
+            return hash;
+        }
+        for (var i = 0; i < string.length; i++) {
+            var char = string.charCodeAt(i);
+            hash = ((hash<<5)-hash)+char;
+            hash = hash & hash; // Convert to 32bit integer
+        }
+        return hash;
+        },
+    newConversation(){
+console.log(this.selectedUser);
+      var _ = require('lodash');
+      let vm=this;
+      firebase.auth().onAuthStateChanged(function(user) {
+            if(!user){
+                vm.$modal.show();
+            }else{
+              let conversation={
+                me: user.uid,
+                offer: vm.selectedUser.offer,
+                tradeFor: vm.selectedUser.tradeFor,
+                tradeId: vm.selectedUser.tradeId,
+                tradeWith: vm.selectedUser.userId,
+                convId: Math.abs(vm.hashCode(vm.selectedUser.userId)+vm.hashCode(user.uid))
+              }
+              axios.post("http://localhost:5000/api/conversations", conversation).then(function(res){
+                   let msg={
+              message: vm.message,
+              from: user.uid,
+              to: conversation.tradeWith,
+              convId: conversation.convId,
+              dateSent:Date.now()
+            }
+            console.log(msg);
+            axios.post("http://localhost:5000/api/chat", msg).then((response)=>{
+              console.log(response);
+              $(".modal").modal('toggle');}).catch((error)=>console.log(error));
+            
+            });
+            }
+        }); 
+    },
     contactUser: function(user) {
+      if(user.userId == this.$store.state.user.uid) {
+        alert("Du kannst dich nicht selbst kontaktieren!");
+      }else{
       this.selectedUser = user;
+      this.message="Hallo, ich würde gerne "+ this.selectedUser.tradeFor+" gegen "+ this.selectedUser.offer+" tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?";
       $(".modal").modal();
       $("#modal-text").focus();
       console.log("Set user id to " + user._id);
+      }
+      
     },
-
     sendMessage: function() {
       if (!this.contactUser) {
         console.error("Missing user id");
@@ -160,8 +214,9 @@ export default {
     fetchItemList: function(perimeter_rectangle) {
       console.log("Fetch item list...");
       var vm = this;
+      
       // var url = `/api/search?topLeftLocation=${perimeter_rectangle.topLeftLocation.latitude},${perimeter_rectangle.topLeftLocation.longitude}&lowerRightLocation=${perimeter_rectangle.bottomRightLocation.latitude},${perimeter_rectangle.bottomRightLocation.longitude}`;
-      var url = "/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
+      var url = "http://localhost:5000/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
       $.getJSON(url).done(function(data) {
         console.log("Fetched item data");
         console.log(data);
