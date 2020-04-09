@@ -54,7 +54,6 @@ const firebaseConfig = {
 
 import Notifications from 'vue-notification'
 
-axios.defaults.baseURL = "http://localhost:"+process.env.PORT;
 Vue.use(Notifications);
 
 import { Icon } from 'leaflet';
