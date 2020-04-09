@@ -23,8 +23,6 @@ const firebaseConfig = {
 
 var fireData = firebase.database();
 
-var db = new mockdb.mockDb(offeringsMockData, mockdb.availableMessages)
-
 async function searchItems(req, res) {
   tlSplit = req.query.topLeftLocation ?
     req.query.topLeftLocation.split(",")
