@@ -79,7 +79,7 @@ export default {
       getMessages(){
           let vm=this;
           console.log(this.me);
-          axios.get("http://localhost:5000/api/chat/"+this.$route.query.convId).then(function(res){
+          axios.get("/api/chat/"+this.$route.query.convId).then(function(res){
                if(!vm.messagesLoaded) vm.messagesLoaded=true;
                vm.messages=[];
                res.data.forEach(element => {
@@ -99,7 +99,7 @@ export default {
             }
             this.messages.push(msg);
             let vm=this;
-            axios.post("http://localhost:5000/api/chat", msg).then((response)=>{
+            axios.post("/api/chat", msg).then((response)=>{
                 //vm.messagesLoaded=false;
                 
             }).catch((error)=>console.log(error));
@@ -113,7 +113,7 @@ export default {
       firebase.auth().onAuthStateChanged(function(user) {
             if(user){
                 vm.$store.commit("SET_USER",_.cloneDeep(user))
-                axios.post("http://localhost:5000/api/user", user);
+                axios.post("/api/user", user);
                 vm.me=user.uid;
                 vm.$store.state.me=user.uid;
                 vm.getMessages();

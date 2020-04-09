@@ -216,7 +216,7 @@ console.log(this.selectedUser);
       var vm = this;
       
       // var url = `/api/search?topLeftLocation=${perimeter_rectangle.topLeftLocation.latitude},${perimeter_rectangle.topLeftLocation.longitude}&lowerRightLocation=${perimeter_rectangle.bottomRightLocation.latitude},${perimeter_rectangle.bottomRightLocation.longitude}`;
-      var url = this.$store.state.baseURL+"/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
+      var url = "/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
       $.getJSON(url).done(function(data) {
         console.log("Fetched item data");
         console.log(data);
