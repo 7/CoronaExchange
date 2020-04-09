@@ -54,6 +54,7 @@ const firebaseConfig = {
 
 import Notifications from 'vue-notification'
 
+axios.defaults.baseURL = "http://localhost:"+process.env.PORT;
 Vue.use(Notifications);
 
 import { Icon } from 'leaflet';
@@ -76,9 +77,10 @@ const router = new VueRouter({
   ]
   })
   router.beforeEach((to, from, next) => {
+    var vm= this;
     if ( to.matched.some(record => record.meta.requiresAuth)) {
       console.log("matched route");
-      let vm= this;
+      
       var _ = require('lodash');
       firebase.auth().onAuthStateChanged(function(user) {
         if(user){
@@ -87,10 +89,8 @@ const router = new VueRouter({
           
           if(store.state.conversations == null){
             let chats=[]
-            console.log(user.uid);
             axios.get("/api/conversations/"+user.uid).then(function(res){
               console.log("roooute");
-          console.log(res);
                res.data.forEach(element => {
                    chats.push(element);
                });

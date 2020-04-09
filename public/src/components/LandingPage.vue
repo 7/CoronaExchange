@@ -135,7 +135,7 @@ console.log(this.selectedUser);
                 tradeWith: vm.selectedUser.userId,
                 convId: Math.abs(vm.hashCode(vm.selectedUser.userId)+vm.hashCode(user.uid))
               }
-              axios.post("http://localhost:5000/api/conversations", conversation).then(function(res){
+              axios.post("/api/conversations", conversation).then(function(res){
                    let msg={
               message: vm.message,
               from: user.uid,
@@ -144,7 +144,7 @@ console.log(this.selectedUser);
               dateSent:Date.now()
             }
             console.log(msg);
-            axios.post("http://localhost:5000/api/chat", msg).then((response)=>{
+            axios.post("/api/chat", msg).then((response)=>{
               console.log(response);
               $(".modal").modal('toggle');}).catch((error)=>console.log(error));
             
@@ -216,7 +216,7 @@ console.log(this.selectedUser);
       var vm = this;
       
       // var url = `/api/search?topLeftLocation=${perimeter_rectangle.topLeftLocation.latitude},${perimeter_rectangle.topLeftLocation.longitude}&lowerRightLocation=${perimeter_rectangle.bottomRightLocation.latitude},${perimeter_rectangle.bottomRightLocation.longitude}`;
-      var url = "http://localhost:5000/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
+      var url = this.$store.state.baseURL+"/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
       $.getJSON(url).done(function(data) {
         console.log("Fetched item data");
         console.log(data);
