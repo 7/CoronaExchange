@@ -9,7 +9,7 @@ const uuid = require('uuid/v4');
 //Firebase Database initialization
 var admin = require("firebase-admin");
 var firebase=require('firebase');
-
+require('dotenv').config();
 
 const firebaseConfig = {     
   apiKey: process.env.API_KEY,     

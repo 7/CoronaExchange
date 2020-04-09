@@ -32,7 +32,7 @@ Vue.use(VueGlobalVariable, {
   }
 })
 Vue.use(VueRouter)
-
+//axios.defaults.baseURL="http://localhost:5000";
 /* Import Components for Router */
 import RegisterComponent from './components/Authentication/Register.vue'
 import LandingComponent from './components/LandingPage.vue'
@@ -77,9 +77,7 @@ const router = new VueRouter({
   })
   router.beforeEach((to, from, next) => {
     var vm= this;
-    if ( to.matched.some(record => record.meta.requiresAuth)) {
-      console.log("matched route");
-      
+    if ( to.matched.some(record => record.meta.requiresAuth)) {      
       var _ = require('lodash');
       firebase.auth().onAuthStateChanged(function(user) {
         if(user){
@@ -89,7 +87,6 @@ const router = new VueRouter({
           if(store.state.conversations == null){
             let chats=[]
             axios.get("/api/conversations/"+user.uid).then(function(res){
-              console.log("roooute");
                res.data.forEach(element => {
                    chats.push(element);
                });

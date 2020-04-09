@@ -54,7 +54,6 @@ export default {
         },
       viewChat(id){
           this.$store.commit("SET_PARTICIPANT", id);
-          console.log(this.$store.state.user);
           this.$router.push({path:'/Chat', query:{convId:Math.abs(this.hashCode(this.$store.state.user.uid)+this.hashCode(id))}});
       },
       getFormattedDate(date){
