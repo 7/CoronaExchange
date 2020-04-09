@@ -217,11 +217,9 @@ export default {
             if(this.location!=null) this.newTrade.location=this.location;
             let vm=this;
             Axios.post("/api/offerings/"+this.newTrade.userId, this.newTrade).then(function(res){
-                console.log(res);
                 vm.newOffering=false;
                 vm.newTrade.offer=null;
                 vm.newTrade.tradeFor=null;
-                console.log(res.data);
                 vm.offerings.push(res.data);
             }).catch(error=>console.log(error));
         },

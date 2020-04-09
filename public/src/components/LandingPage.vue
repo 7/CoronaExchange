@@ -120,7 +120,6 @@ export default {
         return hash;
         },
     newConversation(){
-console.log(this.selectedUser);
       var _ = require('lodash');
       let vm=this;
       firebase.auth().onAuthStateChanged(function(user) {
@@ -143,9 +142,7 @@ console.log(this.selectedUser);
               convId: conversation.convId,
               dateSent:Date.now()
             }
-            console.log(msg);
             axios.post("/api/chat", msg).then((response)=>{
-              console.log(response);
               $(".modal").modal('toggle');}).catch((error)=>console.log(error));
             
             });
@@ -160,7 +157,6 @@ console.log(this.selectedUser);
       this.message="Hallo, ich würde gerne "+ this.selectedUser.tradeFor+" gegen "+ this.selectedUser.offer+" tauschen. Wollen wir dazu einen Treffpunkt vereinbaren?";
       $(".modal").modal();
       $("#modal-text").focus();
-      console.log("Set user id to " + user._id);
       }
       
     },
@@ -219,7 +215,6 @@ console.log(this.selectedUser);
       var url = "/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
       $.getJSON(url).done(function(data) {
         console.log("Fetched item data");
-        console.log(data);
         vm.items = data;
       }).fail(function(err) {
         console.log(err);

@@ -9,7 +9,7 @@ const uuid = require('uuid/v4');
 //Firebase Database initialization
 var admin = require("firebase-admin");
 var firebase=require('firebase');
-
+require('dotenv').config();
 
 const firebaseConfig = {     
   apiKey: process.env.API_KEY,     
@@ -23,7 +23,6 @@ const firebaseConfig = {
 
 var fireData = firebase.database();
 
-var db = new mockdb.mockDb(offeringsMockData, mockdb.availableMessages)
 
 async function searchItems(req, res) {
   tlSplit = req.query.topLeftLocation ?

@@ -80,7 +80,7 @@
   </div>
   <div v-if="login">
           <div class="card-header" style="display:flex; justify-content: space-between; padding: 2.5px; background-color:#33443c; color: white;">
-            <p style="margin-top: auto; margin-left:1vw; font-weight:600;">Registrieren</p>
+            <p style="margin-top: auto; margin-left:1vw; font-weight:600;">Einloggen</p>
             <p class="closeModal h2 mb-2" v-on:click="hide()"><b-icon icon="x-square-fill"></b-icon></p>
           </div>
           
@@ -122,7 +122,7 @@
 
               <div class="form-group row mb-0">
                 <div class="col-md-8 offset-md-4">
-                  <button type="submit" class="btn btn-primary">Register</button>
+                  <button type="submit" class="btn btn-primary">Login</button>
                 </div>
               </div>
             </form>
@@ -207,7 +207,6 @@ export default {
         });
       }else if(this.login){
         firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password).then((user)=>{
-          console.log(user);
           this.hide();
         });
       }

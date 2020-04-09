@@ -1,5 +1,16 @@
 <template>
   <div  class="container" id="app" style="background-color:white; padding-top:1vh;">
+    <div class="alertBox" @click="showInfo=true"><div style="display:inline-block; color: white; margin-top:15px; margin-left:25px;">Bitte beachte die Verhaltensregeln im Bezug auf Corona bei der Übergabe der Ware!</div><md-icon style="height:50px; width:50px; float:right; color:white;">info</md-icon></div>
+      <md-dialog :md-active.sync="showInfo">
+      <md-dialog-title>Verhaltensregeln</md-dialog-title>
+      <div style="margin:2.5vw; font-size: 1.2rem;">1. Der Warentausch sollte kontaktlos erfolgen<br><br>
+      2. Sollte es zu Kontakt gekommen sein, waschen Sie sich anschließend gründlich die Hände (mindestens 20 Sekunden mit Seife)<br><br>
+      3. Beachten Sie den Mindestabstand von 1,5 Metern<br><br>
+      4. Führen Sie keinen Tausch durch, wenn Sie Symptome aufweisen oder sich in Quarantäne befinden</div>
+      <md-dialog-actions>
+        <md-button class="md-primary" @click="showInfo = false">Verstanden</md-button>
+      </md-dialog-actions>
+      </md-dialog>
       <div class="chatcontainer">
       <div v-for="message in messages" v-bind:key="message.message">
         <div v-if="message.from==me" class="msg right-msg">
@@ -58,7 +69,8 @@ export default {
           participant:null,
           messages:[],
           messagesLoaded:false,
-          message:""
+          message:"",
+          showInfo:false
       }
   },
   methods:{
@@ -78,7 +90,7 @@ export default {
         },
       getMessages(){
           let vm=this;
-          console.log(this.me);
+
           axios.get("/api/chat/"+this.$route.query.convId).then(function(res){
                if(!vm.messagesLoaded) vm.messagesLoaded=true;
                vm.messages=[];
@@ -130,11 +142,18 @@ export default {
 </script>
 
 <style>
+.alertBox{
+  height:50px;
+  background-color:#c20000;
+  border-radius:15px;
+}
+
 .chatcontainer{
     overflow-y:scroll;
-    height: calc(100vh - 135px);
+    height: calc(100vh - 200px);
     vertical-align: bottom;
     display: block;
+    margin-top:10px;
 }
 
 
