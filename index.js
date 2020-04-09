@@ -4,11 +4,8 @@ const PORT = process.env.PORT || 5000
 
 const auth = require('./authentication')
 var cors = require('cors')
-const offeringsMockData = require('./offerings-berlin.json')
-const mockdb = require('./mockdb')
 
 const uuid = require('uuid/v4');
-require('dotenv').config();
 //Firebase Database initialization
 var admin = require("firebase-admin");
 var firebase=require('firebase');
@@ -23,13 +20,6 @@ const firebaseConfig = {
   appId: process.env.APP_ID   };   // Initialize Firebase   firebase.initializeApp(firebaseConfig);
 
   firebase.initializeApp(firebaseConfig);
-
-var serviceAccount = require("./serviceAccount.json");
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://coronaexchange-44512.firebaseio.com"
-});
 
 var fireData = firebase.database();
 
