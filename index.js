@@ -23,7 +23,6 @@ const firebaseConfig = {
 
 var fireData = firebase.database();
 
-
 async function searchItems(req, res) {
   tlSplit = req.query.topLeftLocation ?
     req.query.topLeftLocation.split(",")
