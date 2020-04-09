@@ -8,7 +8,7 @@ export default new Vuex.Store({
       user:null,
       me:null,
       conversations:null,
-      messages:null
+      messages:null,
     },
     
     getters: {

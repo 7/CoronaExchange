@@ -34,7 +34,7 @@ export default {
         firebase.database().ref('/conversations').child(user.uid).on('child_changed',function(snapshot){
         let differentChat=[];
         differentChat = snapshot.val();
-        axios.post("http://localhost:5000/api/notification", {convId: differentChat.convId, me: user.uid, participantId: differentChat.tradeWith}).then(function(response){
+        axios.post("/api/notification", {convId: differentChat.convId, me: user.uid, participantId: differentChat.tradeWith}).then(function(response){
           if(response.data != false){
             vm.$notify({
               group: 'newMessage',

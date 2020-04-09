@@ -139,7 +139,7 @@ export default {
                 vm.dataLoaded=true;
                 
                 vm.$store.commit("SET_USER",_.cloneDeep(user))
-                Axios.post("http://localhost:5000/api/user", user);
+                Axios.post("/api/user", user);
                 vm.getTrades();
             }else{
                 vm.$modal.show();
@@ -216,7 +216,7 @@ export default {
             this.newTrade.userId = this.user.uid;
             if(this.location!=null) this.newTrade.location=this.location;
             let vm=this;
-            Axios.post("http://localhost:5000/api/offerings/"+this.newTrade.userId, this.newTrade).then(function(res){
+            Axios.post("/api/offerings/"+this.newTrade.userId, this.newTrade).then(function(res){
                 console.log(res);
                 vm.newOffering=false;
                 vm.newTrade.offer=null;
@@ -227,7 +227,7 @@ export default {
         },
         getTrades(){
             let vm=this;
-            Axios.get("http://localhost:5000/api/trades/"+this.user.uid).then(function(res){
+            Axios.get("/api/trades/"+this.user.uid).then(function(res){
                res.data.forEach(element => {
                    vm.offerings.push(element);
                });
@@ -235,7 +235,7 @@ export default {
         },
         deleteOffer(offer){
             let vm=this;
-            Axios.post("http://localhost:5000/api/deleteTrade/"+this.user.uid,offer).then(function(res){
+            Axios.post("/api/deleteTrade/"+this.user.uid,offer).then(function(res){
                 vm.offerings=[];
                 res.data.forEach(element => {
                    vm.offerings.push(element);
