@@ -8,7 +8,17 @@
       md-cancel-text="Abbrechen"
       @md-cancel="onCancel()"
       @md-confirm="onConfirm()" />
-
+    <md-dialog :md-active.sync="addressGiven" id="address" class="dialog">
+        <p class="error pink-text center-align"></p>
+        <md-dialog-title>Bitte Adresse angeben:</md-dialog-title>
+        Um die Tauschangebote auf der Karte lokalisieren zu können, benötigen wir deine Adresse. Diese ist nur für dich sichtbar und wird nur zur lokalisation verwendet.
+            <input type="search" id="address-input" placeholder="Wo wird getauscht?" />
+                
+        <md-dialog-actions>
+            <md-button class="md-primary" @click="newOffering = false">Abbrechen</md-button>
+            <md-button class="md-primary" @click="addOffering()">Speichern</md-button>
+        </md-dialog-actions>
+      </md-dialog>
       <md-dialog :md-active.sync="showRevalidation" id="passwordDialog" class="dialog">
         <md-dialog-title>Bitte gib zur Bestätigung dein Passwort ein:</md-dialog-title>
         <p class="error pink-text center-align"></p>
@@ -98,10 +108,12 @@
 import firebase from 'firebase'
 import Axios from 'axios'
 import store from '../store.js'
+var places = require('places.js');
 export default {
     store,
     data(){
         return{
+            
             user:null,
             dataLoaded:false,
             deleteAccount:false,
@@ -145,17 +157,14 @@ export default {
                 vm.$modal.show();
             }
         });
-        
-        if(!("geolocation" in navigator)) {
-      console.log("Geolocation is not available");
-      return;
-    }
-    navigator.geolocation.getCurrentPosition(pos => {
-      this.location.lng=pos.coords.longitude;
-      this.location.lat=pos.coords.latitude;
-    }, err => {
-      console.log(err);
-    })
+        var placesAutocomplete = places({
+  appId: "pl680V9MNINR",
+  apiKey: "72569ee87e1cd2ffa3231573b9290d60",
+  container: document.querySelector('#address-input')
+});
+placesAutocomplete.on('change', function(event){
+  vm.$store.commit('SET_LOCATION',event.suggestion.latlng);
+});
     },
     methods:{
         saveToStore(user){

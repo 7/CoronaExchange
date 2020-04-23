@@ -9,6 +9,7 @@ export default new Vuex.Store({
       me:null,
       conversations:null,
       messages:null,
+      currentLocation:[]
     },
     
     getters: {
@@ -29,6 +30,9 @@ export default new Vuex.Store({
         SET_MESSAGES(state, messages){
             state.messages=messages;
         },
+        SET_LOCATION(state,location){
+          state.currentLocation=location;
+        }
 
     },
     
