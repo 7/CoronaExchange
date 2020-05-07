@@ -17,6 +17,8 @@ import 'vue-material/dist/theme/default.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import VueMaterial from 'vue-material'
 import store from './store.js'
+
+
 require('dotenv').config();
 
 Vue.use(VueMaterial);
@@ -32,13 +34,14 @@ Vue.use(VueGlobalVariable, {
   }
 })
 Vue.use(VueRouter)
-//axios.defaults.baseURL="http://localhost:5000";
+axios.defaults.baseURL="http://localhost:5000";
 /* Import Components for Router */
 import RegisterComponent from './components/Authentication/Register.vue'
 import LandingComponent from './components/LandingPage.vue'
 import ChatComponent from './components/Chat.vue'
 import AccountComponent from './components/Account.vue'
 import ChatOverviewComponent from './components/ChatOverview.vue'
+import VueGoogleAutocomplete from 'vue-google-autocomplete'
 
 Vue.config.productionTip = false
 
@@ -81,7 +84,7 @@ const router = new VueRouter({
       var _ = require('lodash');
       firebase.auth().onAuthStateChanged(function(user) {
         if(user){
-          store.commit("SET_USER",_.cloneDeep(user))
+          axios.get('/user/'+user.uid).then((res)=>store.commit("SET_USER",_.cloneDeep(res.data)))
           axios.post("/api/user", user);
           
           if(store.state.conversations == null){

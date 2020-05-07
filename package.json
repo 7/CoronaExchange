@@ -18,6 +18,7 @@
     "express": "^4.15.2",
     "firebase": "^7.13.1",
     "firebase-admin": "^8.10.0",
+    "geofire": "^5.0.1",
     "geolib": "^3.2.1",
     "pusher": "^3.0.1",
     "uuid": "^7.0.2",

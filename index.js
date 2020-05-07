@@ -7,7 +7,6 @@ var cors = require('cors')
 
 const uuid = require('uuid/v4');
 //Firebase Database initialization
-var admin = require("firebase-admin");
 var firebase=require('firebase');
 require('dotenv').config();
 
@@ -21,10 +20,25 @@ const firebaseConfig = {
 
   firebase.initializeApp(firebaseConfig);
 
+  
 var fireData = firebase.database();
+const geofire = require('geofire');
+var geoRef = new geofire.GeoFire(fireData.ref('/tradeLocations'));
 
 async function searchItems(req, res) {
-  tlSplit = req.query.topLeftLocation ?
+  let geoQuery = geoRef.query({center: [8.88058,47.7877], radius:500});
+  let trades = await fireData.ref('/trades').once('value');
+  let radiusTrades=[];
+  geoQuery.on("key_entered", function(key, location) {
+    console.log(key);
+    trades.forEach(elem => elem.forEach(child=>child.key==key && radiusTrades.push(child)));
+  });
+  geoQuery.on('ready',function(){
+    geoQuery.cancel();
+    return jsonResponse(res, radiusTrades)
+  });
+
+  /* tlSplit = req.query.topLeftLocation ?
     req.query.topLeftLocation.split(",")
     : [];
   lrSplit = req.query.lowerRightLocation ?
@@ -61,7 +75,7 @@ async function searchItems(req, res) {
       returnItems.push(child.val());
     })
   });
-  return jsonResponse(res, returnItems);
+  return jsonResponse(res, returnItems); */
 }
 
 async function chatMessages(req, res) {
@@ -125,7 +139,7 @@ async function getUserspecificTrades(req, res){
   return jsonResponse(res, returnItems);
   
 }
-function saveOffering(req,res){
+async function newTrade(req,res){
   let id=uuid();
   let newItem={
     tradeId:id,
@@ -135,11 +149,12 @@ function saveOffering(req,res){
     location:req.body.location,
     date: Date.now()
   }
-  fireData.ref('/trades').child(newItem.userId).child(id).set(newItem);
+  await geoRef.set(id, [req.body.location.lng,req.body.location.lat]);
+  await fireData.ref('/trades').child(newItem.userId).child(id).set(newItem);
   return jsonResponse(res, newItem);
   
 }
-function deleteOffer(req, res){
+function deleteTrade(req, res){
   fireData.ref('/trades').child(req.body.userId).child(req.body.tradeId).remove();
   return getUserspecificTrades(req, res);
 }
@@ -198,6 +213,9 @@ function newConversation(req,res){
   fireData.ref('/conversations').child(participant).child(convId).set(trade);
   res.sendStatus(200);
 }
+function addUserAddress(req, res){
+  fireData.ref('/user').child(req.body.uid).update({adress: [req.body.lng,req.body.lat]})
+}
 
 express()
   .use(express.static(path.join(__dirname, 'public/dist')))
@@ -208,9 +226,9 @@ express()
   .post('/api/chat', /* auth.checkIfAuthenticated ,*/ newMessage)
   .get('/api/conversations/:participantId', getConversations)
   .post('/api/conversations', newConversation)
-  .post('/api/offerings/:participantId',/* auth.checkIfAuthenticated, */ saveOffering)
+  .post('/api/offerings/:participantId',/* auth.checkIfAuthenticated, */ newTrade)
   .get('/api/trades/:participantId', getUserspecificTrades)
-  .post('/api/deleteTrade/:participantId',deleteOffer)
+  .post('/api/deleteTrade/:participantId',deleteTrade)
   .post('/api/user',saveUser)
   .post('/api/notification/', getNotification)
   .listen(PORT, () => console.log("Listening on "+PORT));

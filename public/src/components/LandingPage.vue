@@ -1,6 +1,7 @@
 <template>
   <div id="app" class="landing">
 
+    <input type="search" id="address-input" placeholder="Wo möchtest du suchen?" />
     <MapView v-bind:items="filteredItems"></MapView>
 
     <div class="jumbotron">
@@ -45,6 +46,8 @@ import MapView from "./MapView";
 import axios from 'axios';
 import firebase from 'firebase';
 import store from'../store.js';
+var places = require('places.js');
+const geofire = require('geofire');
 
 export default {
   name: 'LandingPage',
@@ -66,7 +69,8 @@ export default {
       filter_offer_by: "",
       filter_search_by: "",
       items: [],
-      message:""
+      message:"",
+      geoQuery:null
     }
   },
   computed: {
@@ -212,7 +216,7 @@ export default {
       var vm = this;
       
       // var url = `/api/search?topLeftLocation=${perimeter_rectangle.topLeftLocation.latitude},${perimeter_rectangle.topLeftLocation.longitude}&lowerRightLocation=${perimeter_rectangle.bottomRightLocation.latitude},${perimeter_rectangle.bottomRightLocation.longitude}`;
-      var url = "/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
+      var url = "http://localhost:5000/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
       $.getJSON(url).done(function(data) {
         console.log("Fetched item data");
         vm.items = data;
@@ -223,16 +227,45 @@ export default {
   },
   created: function() {
     var vm = this;
+    
     console.log("Retrieve user location...");
     this.getUserLocation(function(location) {
       vm.user_location = location;
       var rectangle = vm.getPerimeterRectangle(location);
       vm.fetchItemList(rectangle);
     })
+  },
+  mounted:function(){
+
+    var geoRef = new geofire.GeoFire(firebase.database().ref('/tradeLocations'));
+    var placesAutocomplete = places({
+  appId: "pl680V9MNINR",
+  apiKey: "72569ee87e1cd2ffa3231573b9290d60",
+  container: document.querySelector('#address-input')
+});
+var vm=this;
+placesAutocomplete.on('change', function(event){
+  vm.$store.commit('SET_LOCATION',event.suggestion.latlng);
+  vm.geoQuery = geoRef.query({center: [event.suggestion.latlng], radius:15});
+  firebase.database().ref('/trades').once('value').then(function(elems){
+  vm.geoQuery.on("key_entered", function(key, location) {
+    console.log(key);
+    elems.forEach(elem => elem.forEach(child=>child.key==key && vm.items.push(child)));
+  });
+  });
+  
+});
+
   }
 }
 </script>
 
 <style>
-
+.ap-dropdown-menu{
+  margin-top:0px !important;
+  z-index: 1000 !important;
+}
+.leaflet-top{
+  z-index:999  !important;
+}
 </style>
