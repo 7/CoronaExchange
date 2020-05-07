@@ -20,6 +20,7 @@ const firebaseConfig = {
 
   firebase.initializeApp(firebaseConfig);
 
+  
 var fireData = firebase.database();
 const geofire = require('geofire');
 var geoRef = new geofire.GeoFire(fireData.ref('/tradeLocations'));
