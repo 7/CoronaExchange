@@ -1,7 +1,7 @@
 const express = require('express')
 const path = require('path')
 const PORT = process.env.PORT || 5000
-
+require('dotenv').config({path:path.resolve(__dirname, './public/.env')});
 const auth = require('./authentication')
 var cors = require('cors')
 
@@ -9,15 +9,13 @@ const uuid = require('uuid/v4');
 //Firebase Database initialization
 var firebase=require('firebase');
 require('dotenv').config();
-
 const firebaseConfig = {     
-  apiKey: process.env.API_KEY,     
-  authDomain: process.env.AUTH_DOMAIN,     
-  databaseURL: process.env.DATABASE_URL,     
-  projectId: process.env.PROJECT_URL,       
-  messagingSenderId: process.env.MESSAGING_SENDER_ID,     
-  appId: process.env.APP_ID   };   // Initialize Firebase   firebase.initializeApp(firebaseConfig);
-
+  apiKey: process.env.VUE_APP_API_KEY,     
+  authDomain: process.env.VUE_APP_AUTH_DOMAIN,     
+  databaseURL: process.env.VUE_APP_DATABASE_URL,     
+  projectId: process.env.VUE_APP_PROJECT_URL,         
+  appId: process.env.VUE_APP_APP_ID   };   // Initialize Firebase   firebase.initializeApp(firebaseConfig);
+process.env.testvalue="testvalue";
   firebase.initializeApp(firebaseConfig);
 
   
@@ -158,8 +156,15 @@ function deleteTrade(req, res){
   fireData.ref('/trades').child(req.body.userId).child(req.body.tradeId).remove();
   return getUserspecificTrades(req, res);
 }
-function saveUser(req, res){
-  fireData.ref('/user').child(req.body.uid).set(req.body);
+async function saveUser(req, res){
+  var user= {
+    uid:req.body.uid,
+    displayName:req.body.displayName,
+  }
+  var exists = await fireData.ref('/user').child(req.body.uid).once('value');
+  console.log(exists);
+  if(exists== null) fireData.ref('/user').child(req.body.uid).set(req.body);
+  
   res.sendStatus(200);
 }
 async function getUser(uid){
@@ -213,8 +218,14 @@ function newConversation(req,res){
   fireData.ref('/conversations').child(participant).child(convId).set(trade);
   res.sendStatus(200);
 }
-function addUserAddress(req, res){
-  fireData.ref('/user').child(req.body.uid).update({adress: [req.body.lng,req.body.lat]})
+async function addUserAddress(req, res){
+  fireData.ref('/user').child(req.body.userId).update({adress: [req.body.location.lng,req.body.location.lat]});
+  var val =await fireData.ref('/user').child(req.body.userId).once('value'); 
+  return jsonResponse(res, val);
+}
+async function getFullUser(req,res){
+  participant = req.params.participantId;
+  return jsonResponse(res, await fireData.ref('/user').child(participant).once('value'));
 }
 
 express()
@@ -230,5 +241,7 @@ express()
   .get('/api/trades/:participantId', getUserspecificTrades)
   .post('/api/deleteTrade/:participantId',deleteTrade)
   .post('/api/user',saveUser)
+  .get('/api/user/:participantId', getFullUser)
   .post('/api/notification/', getNotification)
+  .post('/api/addLocationToUser', addUserAddress)
   .listen(PORT, () => console.log("Listening on "+PORT));

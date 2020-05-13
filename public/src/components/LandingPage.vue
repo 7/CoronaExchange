@@ -6,7 +6,7 @@
 
     <div class="jumbotron">
       <div class="container">
-        <ItemSearch  v-bind:searchFilter="filterKeywords.searchFilter" v-bind:offeringsFilter="filterKeywords.offeringsFilter" v-on:filterBySearch="filterBySearch" v-on:filterByOffer="filterByOffer" />
+        <!-- <ItemSearch  v-bind:searchFilter="filterKeywords.searchFilter" v-bind:offeringsFilter="filterKeywords.offeringsFilter" v-on:filterBySearch="filterBySearch" v-on:filterByOffer="filterByOffer" /> -->
       </div>
     </div>
 
@@ -236,7 +236,6 @@ export default {
     })
   },
   mounted:function(){
-
     var geoRef = new geofire.GeoFire(firebase.database().ref('/tradeLocations'));
     var placesAutocomplete = places({
   appId: "pl680V9MNINR",
@@ -249,7 +248,6 @@ placesAutocomplete.on('change', function(event){
   vm.geoQuery = geoRef.query({center: [event.suggestion.latlng], radius:15});
   firebase.database().ref('/trades').once('value').then(function(elems){
   vm.geoQuery.on("key_entered", function(key, location) {
-    console.log(key);
     elems.forEach(elem => elem.forEach(child=>child.key==key && vm.items.push(child)));
   });
   });

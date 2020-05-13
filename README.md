@@ -19,9 +19,23 @@ To setup and run a local instance clone the repository and follow these steps:
 On the Homepage of your newly created Firebase-Project click on the web-icon (red circled on the screenshot)<br>
     ![Firebase Console Screenshot](Documentation/FirebaseInit.PNG)
     <br>
-* Add your Firebase-Credentials to the project <br>
-Inside the project folder, navigate to 
+* Inside Firebase-Console go to Database and create a realtime database in test mode with the name "exchangePlatform"
+Inside the project folder, navigate to /public and place a file called .env inside this folder.
+This file will contain all your firebase credentials. You can find the Credentials in the console in the project settings.
+The file has to have the following structure:
 
+```bash
+VUE_APP_API_KEY= <api-key>
+VUE_APP_AUTH_DOMAIN= <auth-domain>
+VUE_APP_DATABASE_URL= <database-url>
+VUE_APP_PROJECT_ID= <project-id>
+VUE_APP_APP_ID= <app-id>
+ALIGOLA_KEY = <aligola-api-key>
+```
+Just insert the plain keys, without the quotes and the commas. Go to your aligola profile and copy the api key in this file, too.
+
+
+For running your application, just follow these commands:
 ```bash
 $ cd <respositoryName>
 $ npm install
@@ -33,7 +47,9 @@ $ npm start
 
 Your app should now be running on [localhost:5000](http://localhost:5000/).
 
-
+ToDos:
+* Encryption inside the database: Messages can be read by the administrator of the database
+<!-- 
 ## Backend API
 
 ### GET /api/search
@@ -155,4 +171,4 @@ $ git clone https://github.com/heroku/node-js-getting-started.git # or clone you
 $ cd node-js-getting-started
 $ npm install
 $ npm start
-```
+``` -->

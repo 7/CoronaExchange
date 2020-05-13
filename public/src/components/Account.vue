@@ -1,5 +1,5 @@
 <template>
-    <div class="container" v-if="dataLoaded" style="padding-top:1vh">
+    <div class="container" style="padding-top:1vh">
         <md-dialog-confirm
       :md-active.sync="deleteAccount"
       md-title="Account löschen"
@@ -12,14 +12,14 @@
         <p class="error pink-text center-align"></p>
         <md-dialog-title>Bitte Adresse angeben:</md-dialog-title>
         Um die Tauschangebote auf der Karte lokalisieren zu können, benötigen wir deine Adresse. Diese ist nur für dich sichtbar und wird nur zur lokalisation verwendet.
-            <input type="search" id="address-input" placeholder="Wo wird getauscht?" />
+        <input type="search" id="adress" placeholder="Wo wird getauscht?" />
                 
         <md-dialog-actions>
             <md-button class="md-primary" @click="newOffering = false">Abbrechen</md-button>
             <md-button class="md-primary" @click="addOffering()">Speichern</md-button>
         </md-dialog-actions>
-      </md-dialog>
-      <md-dialog :md-active.sync="showRevalidation" id="passwordDialog" class="dialog">
+    </md-dialog>
+    <md-dialog :md-active.sync="showRevalidation" id="passwordDialog" class="dialog">
         <md-dialog-title>Bitte gib zur Bestätigung dein Passwort ein:</md-dialog-title>
         <p class="error pink-text center-align"></p>
             <md-field>
@@ -30,9 +30,9 @@
             <md-button class="md-primary" @click="showRevalidation = false">Abbrechen</md-button>
             <md-button class="md-primary" @click="onReauthenticate()">Speichern</md-button>
         </md-dialog-actions>
-      </md-dialog>
+    </md-dialog>
 
-      <md-dialog :md-active.sync="changePasswd" id="changePasswd" class="dialog">
+    <md-dialog :md-active.sync="changePasswd" id="changePasswd" class="dialog">
         <p class="error pink-text center-align"></p>
         <md-dialog-title>Passwort ändern</md-dialog-title>
             <md-field>
@@ -52,9 +52,9 @@
             <md-button class="md-primary" @click="changePasswd = false">Abbrechen</md-button>
             <md-button class="md-primary" @click="checkPasswd()">Speichern</md-button>
         </md-dialog-actions>
-      </md-dialog>
+    </md-dialog>
 
-      <md-dialog :md-active.sync="newOffering" id="newOffering" class="dialog">
+    <md-dialog :md-active.sync="newOffering" id="newOffering" class="dialog">
         <p class="error pink-text center-align"></p>
         <md-dialog-title>Neues Tauschangebot anlegen</md-dialog-title>
             <md-field>
@@ -70,37 +70,43 @@
             <md-button class="md-primary" @click="newOffering = false">Abbrechen</md-button>
             <md-button class="md-primary" @click="addOffering()">Speichern</md-button>
         </md-dialog-actions>
-      </md-dialog>
+    </md-dialog>
 
 
         <h1 style="display:inline;">Account</h1><div style="float:right;"><md-button class="md-accent" @click="deleteAccount=true;">Profil löschen</md-button></div>
         <hr/>
-        Danke <p class="nameHighlight">{{user.displayName}}</p>, dass du unsere Idee unterstützt!
-        <div style="height:2.5vh;"/>
-        <table class="tableSize">
-            <tr style="margin:5px"><td>Nutzername:</td><td>{{user.displayName}}</td></tr>
-            <tr><td style="padding-bottom:2vh"/></tr>
-            <tr><td>E-Mail:</td><td>{{user.email}}</td></tr>
-            <tr><td colspan="2"><md-button class="md-default tableSize" @click="changePasswd=true">Passwort ändern</md-button></td></tr>
-            <tr><td colspan="2"><md-button class="md-default tableSize" @click="changeProfile=true;">Profil bearbeiten</md-button> </td></tr>
-        </table>
-        <div style="height:2.5vh;"/>
-        <hr>
-        <h1 style="display:inline;">Deine Tauschangebote:</h1><div style="float:right;"><md-button class="md-icon-button md-raised" @click="newOffering=true;"><md-icon>add</md-icon></md-button></div>
-        <hr>
-        <div v-for="offer in offerings" :key="offer.tradeId" class="card">
-            <p class="h2 mb-2" style="text-align:right;" @click="deleteOffer(offer)"><md-icon style="color: #c20000">delete</md-icon></p>
-            <table style="width:100%;">
-                <tr><td>Suche:</td><td>Biete:</td></tr>
-                <tr><th>{{offer.tradeFor}}</th><th>{{offer.offer}}</th></tr>
-            </table>
-            <br><br>
-            <table style="width:100%;">
-                <tr><td><p style="font-size:0.75rem; color:darkgray;"> Eingestellt am {{getFormattedDate(offer.date)}}</p></td><td></td></tr>
-            </table>
-            
-        </div>
         
+        <div v-if="dataLoaded">
+            <div style="height:2.5vh;"/>
+            <table class="tableSize">
+                <tr style="margin:5px"><td>Nutzername:</td><td>{{user.displayName}}</td></tr>
+                <tr><td style="padding-bottom:2vh"/></tr>
+                <tr><td>E-Mail:</td><td>{{user.email}}</td></tr>
+                <tr><td style="padding-bottom:2vh"/></tr>
+                <tr><td>Standort-Status:</td><td><md-icon v-if="hasLocation" style="color:mediumseagreen !important;">check_circle</md-icon><md-icon v-else style="color:indianred !important;">cancel</md-icon></td></tr>
+                <tr><td colspan="2"><md-button class="md-default tableSize" @click="changePasswd=true">Passwort ändern</md-button></td></tr>
+                <tr><td colspan="2"><md-button class="md-default tableSize" @click="changeProfile=true;">Profil bearbeiten</md-button> </td></tr>
+                <tr><td colspan="2"><md-button class="md-default tableSize" @click="showLocation()">{{locationText}}</md-button> </td></tr>
+                <tr v-if="isLocation"><td colspan="2"><input type="search" id="location" placeholder="Wo wird getauscht?" /></td></tr>
+                
+            </table>
+            <div style="height:2.5vh;"/>
+            <hr>
+            <h1 style="display:inline;">Deine Tauschangebote:</h1><div style="float:right;"><md-button class="md-icon-button md-raised" @click="newOffering=true;"><md-icon>add</md-icon></md-button></div>
+            <hr>
+            <div v-for="offer in offerings" :key="offer.tradeId" class="card">
+                <p class="h2 mb-2" style="text-align:right;" @click="deleteOffer(offer)"><md-icon style="color: #c20000">delete</md-icon></p>
+                <table style="width:100%;">
+                    <tr><td>Suche:</td><td>Biete:</td></tr>
+                    <tr><th>{{offer.tradeFor}}</th><th>{{offer.offer}}</th></tr>
+                </table>
+                <br><br>
+                <table style="width:100%;">
+                    <tr><td><p style="font-size:0.75rem; color:darkgray;"> Eingestellt am {{getFormattedDate(offer.date)}}</p></td><td></td></tr>
+                </table>
+                
+            </div>
+        </div>
     </div>
 </template>
 
@@ -139,16 +145,24 @@ export default {
             location:{
                 lng:null,
                 lat:null
-            }
+            },
+            addressGiven:false,
+            locationText:"Standort hinzufügen",
+            hasLocation:false,
+            isLocation:false
         }
     },
     mounted(){
         let vm=this;
         var _ = require('lodash');
-        firebase.auth().onAuthStateChanged(function(user) {
+        this.user= this.$store.state.user;
+        this.dataLoaded=true;
+
+        /* firebase.auth().onAuthStateChanged(function(user) {
             if(user){
                 vm.user=user;
                 vm.dataLoaded=true;
+                console.log(document.getElementById('aligola'));
                 
                 vm.$store.commit("SET_USER",_.cloneDeep(user))
                 Axios.post("/api/user", user);
@@ -156,17 +170,34 @@ export default {
             }else{
                 vm.$modal.show();
             }
-        });
-        var placesAutocomplete = places({
-  appId: "pl680V9MNINR",
-  apiKey: "72569ee87e1cd2ffa3231573b9290d60",
-  container: document.querySelector('#address-input')
-});
-placesAutocomplete.on('change', function(event){
-  vm.$store.commit('SET_LOCATION',event.suggestion.latlng);
-});
+        }); */
     },
     methods:{
+        async showLocation(){
+            this.isLocation=true;
+            var vm = this;
+            var checkExist = setInterval(function() {
+                if (document.getElementById('location') != null) {
+                    var placesAutocomplete = places({
+                    appId: "pl680V9MNINR",
+                    apiKey: "72569ee87e1cd2ffa3231573b9290d60",
+                    container: document.getElementById('location')
+                    });
+                    placesAutocomplete.on('change', function(event){
+                        console.log(event.suggestion.latlng);
+                        Axios.post('/api/addLocationToUser', {userId: vm.$store.state.user.uid, location: event.suggestion.latlng}).then((data)=>{
+                            vm.$store.commit("SET_USER",_.cloneDeep(data))
+                            /* vm.dataLoaded=false; */
+                            vm.hasLocation=true;
+                            vm.isLocation=false;
+                            vm.locationText="Standort ändern"
+                            /* vm.dataLoaded=true; */
+                        })
+                    });
+                    clearInterval(checkExist);
+                }
+            }, 100);
+        },
         saveToStore(user){
             
         },

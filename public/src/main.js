@@ -18,9 +18,6 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import VueMaterial from 'vue-material'
 import store from './store.js'
 
-
-require('dotenv').config();
-
 Vue.use(VueMaterial);
 
 Vue.use(BootstrapVue)
@@ -44,15 +41,14 @@ import ChatOverviewComponent from './components/ChatOverview.vue'
 import VueGoogleAutocomplete from 'vue-google-autocomplete'
 
 Vue.config.productionTip = false
-
 const firebaseConfig = {     
-  apiKey: process.env.VUE_APP_APIKEY,     
+  apiKey: process.env.VUE_APP_API_KEY,     
   authDomain: process.env.VUE_APP_AUTH_DOMAIN,     
   databaseURL: process.env.VUE_APP_DATABASE_URL,     
-  projectId: process.env.VUE_APP_PROJECT_ID,        
-  messagingSenderId: process.env.VUE_APP_MESSAGING_SENDER_ID,     
+  projectId: process.env.VUE_APP_PROJECT_ID,           
   appId: process.env.VUE_APP_APP_ID   };   // Initialize Firebase   firebase.initializeApp(firebaseConfig);
 
+  
   firebase.initializeApp(firebaseConfig);
 
 import Notifications from 'vue-notification'
@@ -84,19 +80,23 @@ const router = new VueRouter({
       var _ = require('lodash');
       firebase.auth().onAuthStateChanged(function(user) {
         if(user){
-          axios.get('/user/'+user.uid).then((res)=>store.commit("SET_USER",_.cloneDeep(res.data)))
-          axios.post("/api/user", user);
+          axios.post("/api/user", user).then(
+            ()=>{
+              axios.get('/api/user/'+user.uid).then((res)=>{
+                store.commit("SET_USER",_.cloneDeep(res.data))});
+                if(store.state.conversations == null){
+                  let chats=[]
+                  axios.get("/api/conversations/"+user.uid).then(function(res){
+                     res.data.forEach(element => {
+                         chats.push(element);
+                     });
+                     store.commit("SET_CONVERSATIONS",chats);
+                  }).catch((error)=>console.log(error));
+                }
+                  next();
+            }
+          );
           
-          if(store.state.conversations == null){
-            let chats=[]
-            axios.get("/api/conversations/"+user.uid).then(function(res){
-               res.data.forEach(element => {
-                   chats.push(element);
-               });
-               store.commit("SET_CONVERSATIONS",chats);
-            }).catch((error)=>console.log(error));
-          }
-            next();
         }else{
             vm.$modal.show();
         }
