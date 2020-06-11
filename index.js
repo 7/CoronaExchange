@@ -195,7 +195,6 @@ async function getConversations(req, res){
     returnPartners.push(tmp);
   });
   for(let i=0; i<returnPartners.length;++i){
-    console.log(returnPartners[i].tradeWith);
     returnPartners[i].traderName=await getUser(returnPartners[i].tradeWith);
   }
   return jsonResponse(res, returnPartners);
@@ -224,7 +223,6 @@ function newConversation(req,res){
   return jsonResponse(res, val);
 } */
 async function getFullUser(req,res){
-  console.log(req.params.participantId)
   participant = req.params.participantId;
   return jsonResponse(res, await fireData.ref('/user').child(participant).once('value'));
 }

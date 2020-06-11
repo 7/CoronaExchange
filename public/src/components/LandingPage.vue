@@ -2,7 +2,7 @@
   <div id="app" class="landing">
 
     <input type="search" id="address-input" placeholder="Wo möchtest du suchen?" />
-    <MapView v-bind:items="filteredItems"></MapView>
+    <MapView v-bind:items="filteredItems" v-on:contactUser="contactUser"></MapView>
 
     <!-- <div class="jumbotron">
       <div class="container">

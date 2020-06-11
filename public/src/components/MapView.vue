@@ -5,7 +5,7 @@
                     :url="url"
             />
             <div v-for="item in mapItems" :key="item.name">
-                <l-marker @click="logItem(item)" :lat-lng="item.latlng">
+                <l-marker @click="logItem(item)" :lat-lng="item.latlng" :icon="item.userId == userId ? ownTrades:otherTrades">
                     <l-tooltip :options="{ permanent: true, interactive: true }">
                         <div>{{getItems(item)}}</div>
                     </l-tooltip>
@@ -24,8 +24,9 @@
 <script>
   import L from 'leaflet';
   import {LMap, LTileLayer, LMarker, LTooltip} from 'vue2-leaflet';
-
+  import store from '../store.js';
   export default {
+    store,
     name: "MapView",
     props: ["items","location"],
     components: {
@@ -48,6 +49,23 @@
           popupAnchor: [1, -34],
           shadowSize: [41, 41]
         }),
+        ownTrades : new L.Icon({
+          iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        }),
+        otherTrades : new L.Icon({
+          iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
+          shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34],
+          shadowSize: [41, 41]
+        }),
+        userId:null,
 
       }
     },
@@ -63,13 +81,13 @@
       },
       getItems(item){
         var tmp = this.mapItems.filter(elem=> elem.location == item.location);
-        console.log(tmp);
         if(tmp.length <=1) return item.offer;
         return tmp.length+" Angebote";
 
       },
-      logItem(item){
-        console.log(item);
+      logItem:function(item){
+        if(item.userId != this.userId) this.$emit('contactUser', item);
+        
       }
     },
     created(){
@@ -83,6 +101,7 @@
       });
     },
     mounted(){
+      this.userId = this.$store.state.user.uid;
     }
   }
 </script>
