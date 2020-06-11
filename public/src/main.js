@@ -75,14 +75,15 @@ const router = new VueRouter({
   ]
   })
   router.beforeEach((to, from, next) => {
-    var vm= this;
     if ( to.matched.some(record => record.meta.requiresAuth)) {      
       var _ = require('lodash');
       firebase.auth().onAuthStateChanged(function(user) {
         if(user){
+          console.log(user);
           axios.post("/api/user", user).then(
             ()=>{
               axios.get('/api/user/'+user.uid).then((res)=>{
+                console.log(res);
                 store.commit("SET_USER",_.cloneDeep(res.data))});
                 if(store.state.conversations == null){
                   let chats=[]
@@ -91,6 +92,15 @@ const router = new VueRouter({
                          chats.push(element);
                      });
                      store.commit("SET_CONVERSATIONS",chats);
+                     if ( to.matched.some(record => record.meta.requiresConversations)) {
+                      let chats=[]
+                      axios.get("/api/conversations/"+store.state.user.uid).then(function(res){
+                         res.data.forEach(element => {
+                             chats.push(element);
+                         });
+                         store.commit("SET_CONVERSATIONS",chats);
+                      }).catch((error)=>console.log(error));
+                    }
                   }).catch((error)=>console.log(error));
                 }
                   next();
@@ -98,22 +108,14 @@ const router = new VueRouter({
           );
           
         }else{
-            vm.$modal.show();
+          parent.$modal.show();
         }
     });
-    } if ( to.matched.some(record => record.meta.requiresConversations)) {
-      let chats=[]
-      axios.get("/api/conversations/"+store.state.user.uid).then(function(res){
-         res.data.forEach(element => {
-             chats.push(element);
-         });
-         store.commit("SET_CONVERSATIONS",chats);
-      }).catch((error)=>console.log(error));
-    }else {
+    } else {
         next();
     }
 });
-new Vue({
+var parent = new Vue({
   router,
   store,
   render: h => h(App),

@@ -19,7 +19,7 @@
             <md-button class="md-primary" @click="addOffering()">Speichern</md-button>
         </md-dialog-actions>
     </md-dialog>
-    <md-dialog :md-active.sync="showRevalidation" id="passwordDialog" class="dialog">
+<!--     <md-dialog :md-active.sync="showRevalidation" id="passwordDialog" class="dialog">
         <md-dialog-title>Bitte gib zur Bestätigung dein Passwort ein:</md-dialog-title>
         <p class="error pink-text center-align"></p>
             <md-field>
@@ -52,7 +52,7 @@
             <md-button class="md-primary" @click="changePasswd = false">Abbrechen</md-button>
             <md-button class="md-primary" @click="checkPasswd()">Speichern</md-button>
         </md-dialog-actions>
-    </md-dialog>
+    </md-dialog> -->
 
     <md-dialog :md-active.sync="newOffering" id="newOffering" class="dialog">
         <p class="error pink-text center-align"></p>
@@ -65,7 +65,7 @@
                 <label>Was möchtest du dafür haben? (Kann auch leer gelassen werden)</label>
                 <md-input v-model="newTrade.tradeFor"></md-input>
             </md-field>
-        
+        <input type="search" id="location" placeholder="Wo wird getauscht?" />
         <md-dialog-actions>
             <md-button class="md-primary" @click="newOffering = false">Abbrechen</md-button>
             <md-button class="md-primary" @click="addOffering()">Speichern</md-button>
@@ -73,7 +73,7 @@
     </md-dialog>
 
 
-        <h1 style="display:inline;">Account</h1><div style="float:right;"><md-button class="md-accent" @click="deleteAccount=true;">Profil löschen</md-button></div>
+        <h1 style="display:inline;">Account</h1><div style="float:right;"><md-button class="md-accent" v-if="dataLoaded" @click="deleteAccount=true;">Profil löschen</md-button></div>
         <hr/>
         
         <div v-if="dataLoaded">
@@ -83,16 +83,16 @@
                 <tr><td style="padding-bottom:2vh"/></tr>
                 <tr><td>E-Mail:</td><td>{{user.email}}</td></tr>
                 <tr><td style="padding-bottom:2vh"/></tr>
-                <tr><td>Standort-Status:</td><td><md-icon v-if="hasLocation" style="color:mediumseagreen !important;">check_circle</md-icon><md-icon v-else style="color:indianred !important;">cancel</md-icon></td></tr>
-                <tr><td colspan="2"><md-button class="md-default tableSize" @click="changePasswd=true">Passwort ändern</md-button></td></tr>
-                <tr><td colspan="2"><md-button class="md-default tableSize" @click="changeProfile=true;">Profil bearbeiten</md-button> </td></tr>
-                <tr><td colspan="2"><md-button class="md-default tableSize" @click="showLocation()">{{locationText}}</md-button> </td></tr>
-                <tr v-if="isLocation"><td colspan="2"><input type="search" id="location" placeholder="Wo wird getauscht?" /></td></tr>
+                <!-- <tr><td>Standort-Status:</td><td><md-icon v-if="hasLocation" style="color:mediumseagreen !important;">check_circle</md-icon><md-icon v-else style="color:indianred !important;">cancel</md-icon></td></tr> -->
+<!--                 <tr><td colspan="2"><md-button class="md-default tableSize" @click="changePasswd=true">Passwort ändern</md-button></td></tr>
+                <tr><td colspan="2"><md-button class="md-default tableSize" @click="changeProfile=true;">Profil bearbeiten</md-button> </td></tr> -->
+                <!-- <tr><td colspan="2"><md-button class="md-default tableSize" @click="showLocation()">{{locationText}}</md-button> </td></tr>
+                <tr v-if="isLocation"><td colspan="2"><input type="search" id="location" placeholder="Wo wird getauscht?" /></td></tr> -->
                 
             </table>
             <div style="height:2.5vh;"/>
             <hr>
-            <h1 style="display:inline;">Deine Tauschangebote:</h1><div style="float:right;"><md-button class="md-icon-button md-raised" @click="newOffering=true;"><md-icon>add</md-icon></md-button></div>
+            <h1 style="display:inline;">Deine Tauschangebote:</h1><div style="float:right;"><md-button class="md-icon-button md-raised" @click="showLocation()"><md-icon>add</md-icon></md-button></div>
             <hr>
             <div v-for="offer in offerings" :key="offer.tradeId" class="card">
                 <p class="h2 mb-2" style="text-align:right;" @click="deleteOffer(offer)"><md-icon style="color: #c20000">delete</md-icon></p>
@@ -156,8 +156,8 @@ export default {
         let vm=this;
         var _ = require('lodash');
         this.user= this.$store.state.user;
-        this.dataLoaded=true;
-
+        this.$store.state.user==null ? this.dataLoaded=false:this.dataLoaded=true;
+        this.getTrades();
         /* firebase.auth().onAuthStateChanged(function(user) {
             if(user){
                 vm.user=user;
@@ -174,7 +174,7 @@ export default {
     },
     methods:{
         async showLocation(){
-            this.isLocation=true;
+            this.newOffering=true;
             var vm = this;
             var checkExist = setInterval(function() {
                 if (document.getElementById('location') != null) {
@@ -184,22 +184,14 @@ export default {
                     container: document.getElementById('location')
                     });
                     placesAutocomplete.on('change', function(event){
-                        console.log(event.suggestion.latlng);
-                        Axios.post('/api/addLocationToUser', {userId: vm.$store.state.user.uid, location: event.suggestion.latlng}).then((data)=>{
-                            vm.$store.commit("SET_USER",_.cloneDeep(data))
-                            /* vm.dataLoaded=false; */
-                            vm.hasLocation=true;
-                            vm.isLocation=false;
-                            vm.locationText="Standort ändern"
-                            /* vm.dataLoaded=true; */
-                        })
+                        vm.location={
+                            lng: event.suggestion.latlng.lng,
+                            lat: event.suggestion.latlng.lat
+                        }
                     });
                     clearInterval(checkExist);
                 }
             }, 100);
-        },
-        saveToStore(user){
-            
         },
         getFormattedDate(date){
             date=new Date(date);

@@ -28,7 +28,6 @@ async function searchItems(req, res) {
   let trades = await fireData.ref('/trades').once('value');
   let radiusTrades=[];
   geoQuery.on("key_entered", function(key, location) {
-    console.log(key);
     trades.forEach(elem => elem.forEach(child=>child.key==key && radiusTrades.push(child)));
   });
   geoQuery.on('ready',function(){
@@ -147,7 +146,8 @@ async function newTrade(req,res){
     location:req.body.location,
     date: Date.now()
   }
-  await geoRef.set(id, [req.body.location.lng,req.body.location.lat]);
+
+  await geoRef.set(id, [req.body.location.lat,req.body.location.lng]);
   await fireData.ref('/trades').child(newItem.userId).child(id).set(newItem);
   return jsonResponse(res, newItem);
   
@@ -162,8 +162,7 @@ async function saveUser(req, res){
     displayName:req.body.displayName,
   }
   var exists = await fireData.ref('/user').child(req.body.uid).once('value');
-  console.log(exists);
-  if(exists== null) fireData.ref('/user').child(req.body.uid).set(req.body);
+  if(exists.val()== null) fireData.ref('/user').child(req.body.uid).set(req.body);
   
   res.sendStatus(200);
 }
@@ -218,12 +217,14 @@ function newConversation(req,res){
   fireData.ref('/conversations').child(participant).child(convId).set(trade);
   res.sendStatus(200);
 }
-async function addUserAddress(req, res){
+/* async function addUserAddress(req, res){
+  console.log("reached"+ req.body.location.lat);
   fireData.ref('/user').child(req.body.userId).update({adress: [req.body.location.lng,req.body.location.lat]});
   var val =await fireData.ref('/user').child(req.body.userId).once('value'); 
   return jsonResponse(res, val);
-}
+} */
 async function getFullUser(req,res){
+  console.log(req.params.participantId)
   participant = req.params.participantId;
   return jsonResponse(res, await fireData.ref('/user').child(participant).once('value'));
 }
@@ -243,5 +244,4 @@ express()
   .post('/api/user',saveUser)
   .get('/api/user/:participantId', getFullUser)
   .post('/api/notification/', getNotification)
-  .post('/api/addLocationToUser', addUserAddress)
   .listen(PORT, () => console.log("Listening on "+PORT));

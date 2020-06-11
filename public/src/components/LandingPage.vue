@@ -4,11 +4,11 @@
     <input type="search" id="address-input" placeholder="Wo möchtest du suchen?" />
     <MapView v-bind:items="filteredItems"></MapView>
 
-    <div class="jumbotron">
+    <!-- <div class="jumbotron">
       <div class="container">
-        <!-- <ItemSearch  v-bind:searchFilter="filterKeywords.searchFilter" v-bind:offeringsFilter="filterKeywords.offeringsFilter" v-on:filterBySearch="filterBySearch" v-on:filterByOffer="filterByOffer" /> -->
+        <ItemSearch  v-bind:searchFilter="filterKeywords.searchFilter" v-bind:offeringsFilter="filterKeywords.offeringsFilter" v-on:filterBySearch="filterBySearch" v-on:filterByOffer="filterByOffer" />
       </div>
-    </div>
+    </div> -->
 
     <div class="container">
       <ItemList v-bind:items="filteredItems" v-on:contactUser="contactUser" />
@@ -170,8 +170,24 @@ export default {
         return;
       }
     },
+    initialLocation(geoRef){
+      this.user_location={
+        lat: 47.814193,
+        lng: 9.653198
+      }
+      var vm = this;
+      this.$store.commit('SET_LOCATION', this.user_location);
+    this.geoQuery = geoRef.query({center: [47.814193, 9.653198], radius:150});
+    firebase.database().ref('/trades').once('value').then(function(elems){
+      console.log(elems.val());
+    vm.geoQuery.on("key_entered", function(key, location) {
+    elems.forEach(elem => elem.forEach(child=>child.key==key && vm.items.push(child.val())));
+    console.log(vm.items);
+  });
+  });
+    }
 
-    filterBySearch: function(keyword) {
+    /* filterBySearch: function(keyword) {
       this.filter_search_by = keyword;
     },
 
@@ -180,18 +196,8 @@ export default {
     },
 
     getUserLocation: function(callback) {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(function(pos) {
-          callback({
-            long: pos.coords.longitude.toFixed(2),
-            lat: pos.coords.longitude.toFixed(2)
-          });
-        });
-      }
-      else {
-        var postal_code = prompt("Wir benötigen Deine ungefähre Position, um Angebote in Deiner Nähe zu finden. Bitte gib Deine PLZ an:");
-        callback(postal_code);
-      }
+
+        callback("88214");
     },
 
     getPerimeterRectangle: function(location) {
@@ -216,26 +222,29 @@ export default {
       var vm = this;
       
       // var url = `/api/search?topLeftLocation=${perimeter_rectangle.topLeftLocation.latitude},${perimeter_rectangle.topLeftLocation.longitude}&lowerRightLocation=${perimeter_rectangle.bottomRightLocation.latitude},${perimeter_rectangle.bottomRightLocation.longitude}`;
-      var url = "http://localhost:5000/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=52.43,13.43";
+      var url = "http://localhost:5000/api/search?topLeftLocation=52.40,13.40&lowerRightLocation=47.814193,9.653198";
       $.getJSON(url).done(function(data) {
         console.log("Fetched item data");
         vm.items = data;
       }).fail(function(err) {
         console.log(err);
       });
-    }
+    } */
   },
-  created: function() {
+  /* created: function() {
     var vm = this;
     
     console.log("Retrieve user location...");
     this.getUserLocation(function(location) {
+      console.log(location);
       vm.user_location = location;
       var rectangle = vm.getPerimeterRectangle(location);
       vm.fetchItemList(rectangle);
     })
-  },
+    
+  }, */
   mounted:function(){
+
     var geoRef = new geofire.GeoFire(firebase.database().ref('/tradeLocations'));
     var placesAutocomplete = places({
   appId: "pl680V9MNINR",
@@ -243,14 +252,24 @@ export default {
   container: document.querySelector('#address-input')
 });
 var vm=this;
+this.initialLocation(geoRef);
 placesAutocomplete.on('change', function(event){
   vm.$store.commit('SET_LOCATION',event.suggestion.latlng);
-  vm.geoQuery = geoRef.query({center: [event.suggestion.latlng], radius:15});
-  firebase.database().ref('/trades').once('value').then(function(elems){
+  vm.geoQuery = geoRef.query({center: [event.suggestion.latlng.lat,event.suggestion.latlng.lng], radius:15});
+  /* firebase.database().ref('/trades').once('value').then(function(elems){
+    console.log(elems);
   vm.geoQuery.on("key_entered", function(key, location) {
+    console.log(key)
     elems.forEach(elem => elem.forEach(child=>child.key==key && vm.items.push(child)));
   });
-  });
+  }); */
+  vm.geoQuery.on("key_entered", function(key, location, distance) {
+  console.log(key);
+});
+vm.geoQuery.on("ready", function() {
+  vm.geoQuery.cancel();
+  console.log("ready");
+});
   
 });
 
