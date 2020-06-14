@@ -109,6 +109,7 @@ function jsonResponse(res, obj){
 }
 
 function newMessage(req, res) {
+  console.log(req.body)
   me = req.body.from;
   participant = req.body.to;
   message = {
@@ -127,7 +128,7 @@ function newMessage(req, res) {
 
 async function getUserspecificTrades(req, res){
   let tradeItems;
-  participant = req.params.participantId;
+  participant = req.params.Id;
   tradeItems=await fireData.ref('/trades').child(participant).once('value');
   let returnItems=[];
   tradeItems.forEach(function(childSnapshot){
@@ -138,6 +139,7 @@ async function getUserspecificTrades(req, res){
 }
 async function newTrade(req,res){
   let id=uuid();
+  console.log(req.body)
   let newItem={
     tradeId:id,
     userId:req.body.userId,
@@ -153,16 +155,13 @@ async function newTrade(req,res){
   
 }
 function deleteTrade(req, res){
+  console.log(req.body)
   fireData.ref('/trades').child(req.body.userId).child(req.body.tradeId).remove();
   return getUserspecificTrades(req, res);
 }
 async function saveUser(req, res){
-  var user= {
-    uid:req.body.uid,
-    displayName:req.body.displayName,
-  }
   var exists = await fireData.ref('/user').child(req.body.uid).once('value');
-  if(exists.val()== null) fireData.ref('/user').child(req.body.uid).set(user);
+  if(exists.val()== null) fireData.ref('/user').child(req.body.uid).set(req.body);
   
   res.sendStatus(200);
 }
@@ -171,24 +170,8 @@ async function getUser(uid){
   username=username.val().displayName;
   return username;
 }
-async function getNotification(req, res){
-  let messages=(await fireData.ref('/messages').child(req.body.convId).once('value'));
-  let returnMessages=[];
-  messages.forEach(function(partner){
-    tmp=partner.val();
-    returnMessages.push(tmp);
-  });
-  if(returnMessages[returnMessages.length - 1].from != req.body.me){
-    let username=await fireData.ref('/user').child(req.body.participantId).once('value');
-    username=username.val().displayName;
-    return jsonResponse(res, username);
-  }else{
-    return jsonResponse(res, false);
-  }
-  
-}
 async function getConversations(req, res){
-  conversationPartners=await fireData.ref('/conversations').child(req.params.participantId).once('value');
+  conversationPartners=await fireData.ref('/conversations').child(req.params.Id).once('value');
   let returnPartners=[]
   conversationPartners.forEach(function(partner){
     tmp=partner.val();
@@ -200,6 +183,7 @@ async function getConversations(req, res){
   return jsonResponse(res, returnPartners);
 }
 function newConversation(req,res){
+  console.log(req.body);
   me = req.body.me;
   participant = req.body.tradeWith;
   convId = req.body.convId;
@@ -223,7 +207,7 @@ function newConversation(req,res){
   return jsonResponse(res, val);
 } */
 async function getFullUser(req,res){
-  participant = req.params.participantId;
+  participant = req.params.Id;
   return jsonResponse(res, await fireData.ref('/user').child(participant).once('value'));
 }
 
@@ -231,15 +215,15 @@ express()
   .use(express.static(path.join(__dirname, 'public/dist')))
   .use(express.json())
   .use(cors())
-  .get('/api/search', searchItems)
-  .get('/api/chat/:conversationId', /* auth.checkIfAuthenticated ,*/ chatMessages)
-  .post('/api/chat', /* auth.checkIfAuthenticated ,*/ newMessage)
-  .get('/api/conversations/:participantId', getConversations)
+  .post('/api/offerings', newTrade)
+  .get('/api/trades/:Id', getUserspecificTrades)
+  .post('/api/deleteTrade/:Id',deleteTrade)
+
+  .get('/api/chat/:conversationId', chatMessages)
+  .post('/api/chat',newMessage)
+  .get('/api/conversations/:Id', getConversations)
   .post('/api/conversations', newConversation)
-  .post('/api/offerings/:participantId',/* auth.checkIfAuthenticated, */ newTrade)
-  .get('/api/trades/:participantId', getUserspecificTrades)
-  .post('/api/deleteTrade/:participantId',deleteTrade)
+  
   .post('/api/user',saveUser)
-  .get('/api/user/:participantId', getFullUser)
-  .post('/api/notification/', getNotification)
+  .get('/api/user/:Id', getFullUser)
   .listen(PORT, () => console.log("Listening on "+PORT));

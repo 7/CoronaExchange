@@ -79,7 +79,7 @@ const router = new VueRouter({
       var _ = require('lodash');
       firebase.auth().onAuthStateChanged(function(user) {
         if(user){
-          axios.post("/api/user", user).then(
+          axios.post("/api/user", {uid:user.uid, displayName:user.displayName, email:user.email}).then(
             ()=>{
               axios.get('/api/user/'+user.uid).then((res)=>{
                 store.commit("SET_USER",_.cloneDeep(res.data))});

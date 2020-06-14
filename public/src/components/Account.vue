@@ -247,9 +247,11 @@ export default {
         },
         addOffering(){
             this.newTrade.userId = this.user.uid;
+            console.log(this.newTrade);
             if(this.location!=null) this.newTrade.location=this.location;
             let vm=this;
-            Axios.post("/api/offerings/"+this.newTrade.userId, this.newTrade).then(function(res){
+            console.log(this.newTrade);
+            Axios.post("/api/offerings", this.newTrade).then(function(res){
                 vm.newOffering=false;
                 vm.newTrade.offer=null;
                 vm.newTrade.tradeFor=null;
@@ -266,7 +268,7 @@ export default {
         },
         deleteOffer(offer){
             let vm=this;
-            Axios.post("/api/deleteTrade/"+this.user.uid,offer).then(function(res){
+            Axios.post("/api/deleteTrade/"+this.user.uid,{tradeId:offer.tradeId, userId: offer.userId}).then(function(res){
                 vm.offerings=[];
                 res.data.forEach(element => {
                    vm.offerings.push(element);
