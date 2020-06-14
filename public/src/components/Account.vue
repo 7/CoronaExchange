@@ -158,7 +158,6 @@ export default {
         this.user= this.$store.state.user;
         this.$store.state.user==null ? this.dataLoaded=false:this.dataLoaded=true;
         this.getTrades();
-        console.log(this.$store.state.user.uid);
         /* firebase.auth().onAuthStateChanged(function(user) {
             if(user){
                 vm.user=user;

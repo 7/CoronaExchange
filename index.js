@@ -210,7 +210,22 @@ async function getFullUser(req,res){
   participant = req.params.Id;
   return jsonResponse(res, await fireData.ref('/user').child(participant).once('value'));
 }
+async function getNotification(req, res){
+  let messages=(await fireData.ref('/messages').child(req.body.convId).once('value'));
+  let returnMessages=[];
+  messages.forEach(function(partner){
+    tmp=partner.val();
+    returnMessages.push(tmp);
+  });
+  if(returnMessages[returnMessages.length - 1].from != req.body.me){
+    let username=await fireData.ref('/user').child(req.body.participantId).once('value');
+    username=username.val().displayName;
+    return jsonResponse(res, username);
+  }else{
+    return jsonResponse(res, false);
+  }
 
+}
 express()
   .use(express.static(path.join(__dirname, 'public/dist')))
   .use(express.json())
@@ -223,7 +238,7 @@ express()
   .post('/api/chat',newMessage)
   .get('/api/conversations/:Id', getConversations)
   .post('/api/conversations', newConversation)
-  
+  .post('/api/notification/', getNotification)
   .post('/api/user',saveUser)
   .get('/api/user/:Id', getFullUser)
   .listen(PORT, () => console.log("Listening on "+PORT));
