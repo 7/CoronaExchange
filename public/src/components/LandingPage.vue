@@ -177,12 +177,10 @@ export default {
       }
       var vm = this;
       this.$store.commit('SET_LOCATION', this.user_location);
-    this.geoQuery = geoRef.query({center: [47.814193, 9.653198], radius:150});
+    this.geoQuery = geoRef.query({center: [47.814193, 9.653198], radius:15});
     firebase.database().ref('/trades').once('value').then(function(elems){
-      console.log(elems.val());
     vm.geoQuery.on("key_entered", function(key, location) {
     elems.forEach(elem => elem.forEach(child=>child.key==key && vm.items.push(child.val())));
-    console.log(vm.items);
   });
   });
     }
@@ -264,7 +262,10 @@ placesAutocomplete.on('change', function(event){
   });
   }); */
   vm.geoQuery.on("key_entered", function(key, location, distance) {
-  console.log(key);
+    vm.items=[];
+    firebase.database().ref('/trades').once('value').then(function(elems){
+  elems.forEach(elem => elem.forEach(child=>child.key==key && vm.items.push(child.val())));
+    });
 });
 vm.geoQuery.on("ready", function() {
   vm.geoQuery.cancel();

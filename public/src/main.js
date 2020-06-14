@@ -79,11 +79,9 @@ const router = new VueRouter({
       var _ = require('lodash');
       firebase.auth().onAuthStateChanged(function(user) {
         if(user){
-          console.log(user);
           axios.post("/api/user", user).then(
             ()=>{
               axios.get('/api/user/'+user.uid).then((res)=>{
-                console.log(res);
                 store.commit("SET_USER",_.cloneDeep(res.data))});
                 if(store.state.conversations == null){
                   let chats=[]

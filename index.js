@@ -162,7 +162,7 @@ async function saveUser(req, res){
     displayName:req.body.displayName,
   }
   var exists = await fireData.ref('/user').child(req.body.uid).once('value');
-  if(exists.val()== null) fireData.ref('/user').child(req.body.uid).set(req.body);
+  if(exists.val()== null) fireData.ref('/user').child(req.body.uid).set(user);
   
   res.sendStatus(200);
 }

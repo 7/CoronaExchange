@@ -17,27 +17,14 @@
         <li class="nav-item">
           <router-link :to="{path: '/Account'}" class="nav-link">Account</router-link>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" @click="modalToggle()">{{isAuthenticated == true ? 'Logout':'Login'}}</a>
-        </li>
       </ul>
     </div>
   </nav>
 </template>
 
 <script>
-import store from '../store.js'
 export default {
-  store,
-  data(){
-    return{
-      isAuthenticated:false,
-    }
-  },
-  mounted(){
-    this.$store.state.user!= null ? this.isAuthenticated=true:this.isAuthenticated=false;
-  },
-  methods: {
+methods: {
     modalToggle(){
       this.$modal.show();
     }  

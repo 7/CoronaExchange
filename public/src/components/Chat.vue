@@ -12,7 +12,7 @@
       </md-dialog-actions>
       </md-dialog> -->
       <div class="chatcontainer" id="chatcontainer">
-      <div v-for="message in messages" v-bind:key="message.message">
+      <div v-for="message in messages" v-bind:key="message.date">
         <div v-if="message.from==me" class="msg right-msg">
       <div
        class="msg-img"
