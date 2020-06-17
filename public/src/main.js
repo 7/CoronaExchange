@@ -75,14 +75,17 @@ const router = new VueRouter({
   ]
   })
   router.beforeEach((to, from, next) => {
+
     if ( to.matched.some(record => record.meta.requiresAuth)) {      
       var _ = require('lodash');
+      var vm = this;
       firebase.auth().onAuthStateChanged(function(user) {
         if(user){
           axios.post("/api/user", {uid:user.uid, displayName:user.displayName, email:user.email}).then(
             ()=>{
               axios.get('/api/user/'+user.uid).then((res)=>{
-                store.commit("SET_USER",_.cloneDeep(res.data))});
+                store.commit("SET_USER",_.cloneDeep(res.data));
+                /* console.log(vm.$store.state.user); */});
                 if(store.state.conversations == null){
                   let chats=[]
                   axios.get("/api/conversations/"+user.uid).then(function(res){
@@ -101,6 +104,7 @@ const router = new VueRouter({
                     }
                   }).catch((error)=>console.log(error));
                 }
+                
                   next();
             }
           );

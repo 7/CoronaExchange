@@ -109,7 +109,6 @@ function jsonResponse(res, obj){
 }
 
 function newMessage(req, res) {
-  console.log(req.body)
   me = req.body.from;
   participant = req.body.to;
   message = {
@@ -139,7 +138,6 @@ async function getUserspecificTrades(req, res){
 }
 async function newTrade(req,res){
   let id=uuid();
-  console.log(req.body)
   let newItem={
     tradeId:id,
     userId:req.body.userId,
@@ -155,7 +153,6 @@ async function newTrade(req,res){
   
 }
 function deleteTrade(req, res){
-  console.log(req.body)
   fireData.ref('/trades').child(req.body.userId).child(req.body.tradeId).remove();
   return getUserspecificTrades(req, res);
 }
@@ -183,7 +180,6 @@ async function getConversations(req, res){
   return jsonResponse(res, returnPartners);
 }
 function newConversation(req,res){
-  console.log(req.body);
   me = req.body.me;
   participant = req.body.tradeWith;
   convId = req.body.convId;
