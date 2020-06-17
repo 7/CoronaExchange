@@ -47,7 +47,7 @@ export default {
 
     })
             }else{
-                vm.$modal.show();
+                //vm.$modal.show();
             }
         });
     

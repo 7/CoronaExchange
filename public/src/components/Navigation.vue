@@ -1,6 +1,6 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #33443c !important;">
-    <router-link :to="{path: '/'}">CoronaExchange</router-link>
+    <div style="color:white;">ExchangePlatform</div>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -17,9 +17,6 @@
         <li class="nav-item">
           <router-link :to="{path: '/Account'}" class="nav-link">Account</router-link>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" @click="modalToggle()">Login</a>
-        </li>
       </ul>
     </div>
   </nav>
@@ -27,8 +24,7 @@
 
 <script>
 export default {
-
-  methods: {
+methods: {
     modalToggle(){
       this.$modal.show();
     }  

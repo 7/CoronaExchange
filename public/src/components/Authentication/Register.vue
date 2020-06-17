@@ -140,8 +140,10 @@ import firebase from "firebase";
 import firebaseui from 'firebaseui';
 import Modal from '../../modalPlugin.js'
 import "firebaseui/dist/firebaseui.css";
+import store from '../../store';
 
 export default {
+  store,
   data() {
     return {
       form: {
@@ -181,6 +183,8 @@ export default {
     googleLogin(){
       const provider = new firebase.auth.GoogleAuthProvider();
       firebase.auth().signInWithPopup(provider).then((result)=>{
+        console.log(result);
+        this.$store.commit("SET_USER", result.user);
         this.hide();
       }).catch((err)=>{
         alert("Something went wrong");
@@ -192,11 +196,12 @@ export default {
         .auth()
         .createUserWithEmailAndPassword(this.form.email, this.form.password)
         .then(data => {
+          this.$store.commit("SET_USER", data.user);
           data.user
             .updateProfile({
               displayName: this.form.name
             })
-            .then(() => {
+            .then((user) => {
               this.register=false;
               this.login=false;
               this.visible=false;
@@ -206,7 +211,9 @@ export default {
           this.error = err.message;
         });
       }else if(this.login){
-        firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password).then((user)=>{
+        firebase.auth().signInWithEmailAndPassword(this.form.email, this.form.password).then((data)=>{
+          console.log(data.user);
+          this.$store.commit("SET_USER", user);
           this.hide();
         });
       }

@@ -1,12 +1,43 @@
-# CoronaExchange
+# Universal ExchangePlatform
 
-This app allows people to find items they need urgently (and cannot buy, as they are currently sold out) and trade for them with items they have too much of.
+This code is used for setting up a universal ExchangePlatform build using Vue.js, Node.js and Firebase. <br>
+Available functions are:
+* Accountmanagement
+* Map of offerings
+* Searching offerings on the map by address and radius
+* Chat to communicate further trade details
 
 ## Setup
-
-To setup and run a local instance execute the following commands:
+Prerequisites:
+* Google Account for using firebase
+* Heroku Account for hosting the application
+* 
+To setup and run a local instance clone the repository and follow these steps: 
+* Go to the [Firebase Console](https://console.firebase.google.com/)
+* Setup a new project
+* Once created the project add a Web-App to your project:<br>
+On the Homepage of your newly created Firebase-Project click on the web-icon (red circled on the screenshot)<br>
+    ![Firebase Console Screenshot](Documentation/FirebaseInit.PNG)
+    <br>
+* Inside Firebase-Console go to Database and create a realtime database in test mode with the name "exchangePlatform"
+Inside the project folder, navigate to /public and place a file called .env inside this folder.
+This file will contain all your firebase credentials. You can find the Credentials in the console in the project settings.
+The file has to have the following structure:
 
 ```bash
+VUE_APP_API_KEY= <api-key>
+VUE_APP_AUTH_DOMAIN= <auth-domain>
+VUE_APP_DATABASE_URL= <database-url>
+VUE_APP_PROJECT_ID= <project-id>
+VUE_APP_APP_ID= <app-id>
+ALIGOLA_KEY = <aligola-api-key>
+```
+Just insert the plain keys, without the quotes and the commas. Go to your aligola profile and copy the api key in this file, too.
+
+
+For running your application, just follow these commands:
+```bash
+$ cd <respositoryName>
 $ npm install
 $ cd public
 $ npm install
@@ -14,22 +45,11 @@ $ cd ..
 $ npm start
 ```
 
-## Use cases
+Your app should now be running on [localhost:5000](http://localhost:5000/).
 
-### Trade items
-
-A simple example:
-
-Mr. Brown freaked out, when he heard of the outbreak of a new disease. He ran to the store and bought tons of toilet paper. But in his urgency he forgot to buy noodles.
-
-Mrs. Green meanwhile could not get any toilet paper, but bought a bunch of noodle packs. She calls up the CoronaExchange app and adds noodles to her stock, stating that she's willing to trade for toilet paper.
-
-Mr. Brown opens up his app and can quickly check that someone close to him (Mrs. Green) is offering noodles for toilet paper. He clicks the trade offer and negotiates a meeting, where they can safely exchange a set amount of their items.
-
-### Lookup stock exchange values for toilet paper
-
-If you are wondering what amount of toilet paper usually trades for a pack of noodles, you can quickly check with a look at the current CoronaExchange Stock Market.
-
+ToDos:
+* Encryption inside the database: Messages can be read by the administrator of the database
+<!-- 
 ## Backend API
 
 ### GET /api/search
@@ -151,59 +171,4 @@ $ git clone https://github.com/heroku/node-js-getting-started.git # or clone you
 $ cd node-js-getting-started
 $ npm install
 $ npm start
-```
-
-Your app should now be running on [localhost:5000](http://localhost:5000/).
-
-##### Deploying to Heroku
-
-```
-$ heroku create
-$ git push heroku master
-$ heroku open
-```
-or
-
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
-
-##### Documentation
-
-For more information about using Node.js on Heroku, see these Dev Center articles:
-
-- [Getting Started on Heroku with Node.js](https://devcenter.heroku.com/articles/getting-started-with-nodejs)
-- [Heroku Node.js Support](https://devcenter.heroku.com/articles/nodejs-support)
-- [Node.js on Heroku](https://devcenter.heroku.com/categories/nodejs)
-- [Best Practices for Node.js Development](https://devcenter.heroku.com/articles/node-best-practices)
-- [Using WebSockets on Heroku with Node.js](https://devcenter.heroku.com/articles/node-websockets)
-
-### Firebase for Authentication
-
-We decided to use the Google service Firebase to support social login authentication.
-
-### Generate .json test data
-
-The offerings-berlin.json contains sample data in and around Berlin.
-The test data was generated with https://www.json-generator.com/# by using the following query:
-
-```
-[
-  '{{repeat(1000)}}',
-  {
-    _id: '{{objectId()}}',
-    userId: '{{random("4UfWXtocrIVst8ibYw1Nu2CqHQC2", "KhxRmzKFILT8ziEwDhPJZd65lnq1", "sJoqxWyKobTJZp3LAEoZlcyccKg1", "PdWOFNsvMRZRogZQdFxd2oywsAH2")}}',
-    location: {
-      lat: '{{floating(52.354002, 52.622138)}}',
-      lng: '{{floating(13.220354, 13.739104)}}'
-    },
-    offer: '{{random("Nudeln", "Toilettenpapier","Mineralwasser","Dosenwurst")}}',
-    tradeFor: '{{random("Nudeln", "Toilettenpapier","Mineralwasser","Dosenwurst")}}'
-  }
-]
-```
-
-The test users are:
-
-* wolverine@xmen.test (userId:4UfWXtocrIVst8ibYw1Nu2CqHQC2)
-* gandalf@lofr.test (userId: KhxRmzKFILT8ziEwDhPJZd65lnq1)
-* walter@breakingb.test (userId: sJoqxWyKobTJZp3LAEoZlcyccKg1)
-* morpheus@matrix.test (userId: PdWOFNsvMRZRogZQdFxd2oywsAH2)
+``` -->
