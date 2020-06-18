@@ -119,7 +119,6 @@ export default {
     store,
     data(){
         return{
-            
             user:null,
             dataLoaded:false,
             deleteAccount:false,
@@ -179,8 +178,8 @@ export default {
             var checkExist = setInterval(function() {
                 if (document.getElementById('location') != null) {
                     var placesAutocomplete = places({
-                    appId: "pl680V9MNINR",
-                    apiKey: "72569ee87e1cd2ffa3231573b9290d60",
+                    appId: process.env.VUE_APP_ALGOLIA_APPID,
+                    apiKey: process.env.VUE_APP_ALGOLIA_KEY,
                     container: document.getElementById('location')
                     });
                     placesAutocomplete.on('change', function(event){

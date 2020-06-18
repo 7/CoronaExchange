@@ -244,8 +244,8 @@ export default {
   mounted:function(){
     var geoRef = new geofire.GeoFire(firebase.database().ref('/tradeLocations'));
     var placesAutocomplete = places({
-  appId: "pl680V9MNINR",
-  apiKey: process.env.VUE_APP_ALIGOLA_KEY,
+  appId: process.env.VUE_APP_ALGOLIA_APPID,
+  apiKey: process.env.VUE_APP_ALGOLIA_KEY,
   container: document.querySelector('#address-input')
 });
 var vm=this;
