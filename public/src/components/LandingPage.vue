@@ -242,11 +242,10 @@ export default {
     
   }, */
   mounted:function(){
-
     var geoRef = new geofire.GeoFire(firebase.database().ref('/tradeLocations'));
     var placesAutocomplete = places({
-  appId: "pl680V9MNINR",
-  apiKey: "72569ee87e1cd2ffa3231573b9290d60",
+  appId: process.env.VUE_APP_ALGOLIA_APPID,
+  apiKey: process.env.VUE_APP_ALGOLIA_KEY,
   container: document.querySelector('#address-input')
 });
 var vm=this;

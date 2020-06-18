@@ -43,20 +43,19 @@ export default {
   methods:{
     contact(item){
       var vm = this;
-      firebase.auth().onAuthStateChanged(function(user) {
-        if(user){
+      console.log(this.$store.state.user);
+        if(this.$store.state.user != null){
           vm.$emit('contactUser', item);
         }else{
           vm.$modal.show();
         }
-    });
     },
     getStyle(item){
       if(item.userId == this.userId) return "background-color:lightgray;"
     }
   },
   mounted(){
-    this.userId=this.$store.state.user.uid;
+    if(this.$store.state.user != null) this.userId=this.$store.state.user.uid;
   }
 }
 

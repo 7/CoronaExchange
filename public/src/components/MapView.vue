@@ -101,7 +101,7 @@
       });
     },
     mounted(){
-      this.userId = this.$store.state.user.uid;
+      if(this.$store.state.user != null) this.userId = this.$store.state.user.uid;
     }
   }
 </script>
